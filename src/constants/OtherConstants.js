@@ -1,0 +1,4 @@
+export const DATABASE_TABLES = {
+    USER_INFOS : "USER_INFO",
+    EVENT_INFO : "EVENT_INFO"
+};

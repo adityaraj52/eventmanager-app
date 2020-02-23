@@ -15,10 +15,10 @@ import PageNotAvailable from "../views/PageNotAvailable";
 function App() {
   return (
       <Provider store={store}>
-        <div className="App">
+        <div className="App" style={{ position: 'relative',minHeight: '100vh', backgroundColor: '#E9ECEF'}}>
 
             <BrowserRouter>
-                <div >
+                <div>
 
                     <BasicHeader/>
                     <Switch>

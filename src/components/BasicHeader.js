@@ -1,10 +1,10 @@
 import React from "react";
-import {NavDropdown, Navbar, Nav, Form, FormControl, Button} from "react-bootstrap";
+import {Button, Form, FormControl, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {ADD_USER, CREATE_EVENT, EXISTING_USER, PAGE_NOT_AVAILABLE} from "../constants/routes";
 
 // Wire it up together, check types and export
 const BasicHeader = () => (
-    <div style={{width: '100%', marginBottom: '20px'}}>
+    <div style={{width: '100%'}}>
 
         <Navbar bg="dark" variant="dark" expand="lg">
             <Navbar.Brand href="/">Event Tracker</Navbar.Brand>

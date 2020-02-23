@@ -1,5 +1,8 @@
 import React, {Component} from "react";
 import {Button, Col, Form} from "react-bootstrap";
+import CustomisedEditableTable from "../components/CustomisedEditableTable";
+import Database from "../database/firebasedb/Database";
+import {DATABASE_TABLES} from "../constants/OtherConstants";
 
 class AddUser extends Component {
     constructor() {
@@ -26,6 +29,45 @@ class AddUser extends Component {
 
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value});
+    }
+
+    updateUserInfo() {
+        let ref = Database.getInstance().ref().child(DATABASE_TABLES.USER_INFOS);
+        let listArray, counter, arrayBootstrapTableData;
+        ref.on('value', (data) => {
+            counter = 1;
+            listArray = [];
+            arrayBootstrapTableData = [];
+            var databaseTable = data.val();
+            if (databaseTable) {
+                var keys = Object.keys(databaseTable);
+                if (keys) {
+                    for (let i = 0; i < keys.length; i++) {
+                        var organiserName = keys[i];
+                        var eventsByOrganiser = databaseTable[organiserName];
+                        var keyseventsByOrganiser = Object.keys(eventsByOrganiser);
+                        for (let j = 0; j < keyseventsByOrganiser.length; j++) {
+                            var keysEventDetails = Object.keys(eventsByOrganiser[keyseventsByOrganiser[j]]);
+                            let tempArray = [], bootstrapTableElementItem = {
+                                SNo: counter++,
+                                OrganiserName: eventsByOrganiser[keyseventsByOrganiser[j]]["eventorganiserName"],
+                                Location: eventsByOrganiser[keyseventsByOrganiser[j]]["eventLocation"],
+                                Time: eventsByOrganiser[keyseventsByOrganiser[j]]["eventTime"],
+                                Date: eventsByOrganiser[keyseventsByOrganiser[j]]["eventDate"],
+                                Participants: eventsByOrganiser[keyseventsByOrganiser[j]]["eventParticipants"],
+                                CreatedAt: eventsByOrganiser[keyseventsByOrganiser[j]]["eventCreatedAt"]
+
+                            };
+                            arrayBootstrapTableData.push(bootstrapTableElementItem);
+                        }
+                    }
+                    this.setState({
+                        databaseElements: listArray,
+                        bootstrapTableDatabaseElements: arrayBootstrapTableData
+                    });
+                }
+            }
+        });
     }
 
     render() {
@@ -73,6 +115,8 @@ class AddUser extends Component {
                     </Form>
 
                 </div>
+
+                <CustomisedEditableTable/>
             </div>
         )
     }
