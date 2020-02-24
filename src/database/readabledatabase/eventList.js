@@ -77,7 +77,6 @@ export const participantsNameAndContact = [
 ];
 
 export const eventSlotList = [
-    {slot: "Select a Slot"},
     {slot: "8:00-9:00"},
     {slot: "9:00-10:00"},
     {slot: "10:00-11:00"},

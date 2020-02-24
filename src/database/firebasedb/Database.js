@@ -32,12 +32,22 @@ class Database extends Component {
         return this.databaseInstance;
     }
 
-    static writeToDatabase(databaseTableName, databaseEntryKey, data) {
+    static pushToDatabase(databaseTableName, databaseEntryKey, data) {
         if (isSet(databaseTableName) &&
             isSet(databaseEntryKey) &&
             isSet(data) &&
             verifyKeyExistsInObject(databaseTableName, DATABASE_TABLES)) {
             Database.getInstance().ref(databaseTableName + '/' + databaseEntryKey).push(data);
+            return "DATA_SAVED";
+        }
+    }
+
+    static setToDatabase(databaseTableName, databaseEntryKey, data) {
+        if (isSet(databaseTableName) &&
+            isSet(databaseEntryKey) &&
+            isSet(data) &&
+            verifyKeyExistsInObject(databaseTableName, DATABASE_TABLES)) {
+            Database.getInstance().ref(databaseTableName + '/' + databaseEntryKey).set(data);
             return "DATA_SAVED";
         }
     }

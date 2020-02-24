@@ -1,7 +1,12 @@
 import React, {Component} from "react";
 import {Button, Col, Form} from "react-bootstrap";
 import {eventSlotList} from "../database/readabledatabase/eventList.js"
-import {createFormControlSelectOptions} from "../Utils";
+import {
+    createFormControlSelectOptions, extractKeyValueFromArray,
+    generateFirebaseWritableObject, getCurrentTime,
+    getISOFormattedTodayDate,
+    getTodayDate, setUpBootstrapTable
+} from "../Utils";
 import Database from "../database/firebasedb/Database";
 import {DATABASE_TABLES} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -15,18 +20,10 @@ const CREATE_EVENT_FORM_MEMBERS_NAME = {
     EVENT_CREATION_TIMESTAMP: "eventCreationTimeStamp"
 };
 
-const getTodayDate = () => {
-    return new Date().toUTCString().substr(5, 11).split(' ').join(' ');
-};
-
-
-const getISOFormattedTodayDate = () => {
-    return new Date().toISOString().substring(0, 10);
-};
-
-const getCurrentTime = () => {
-    return new Date().toUTCString().substr(17,5).split(' ').join(' ');
-};
+//TODO: ADD FEATURE
+// TO ALLOW USERS TO POSTPAY FOR THE EVENT
+// PRICE FOR THE EVENT
+// DROPDOWN FOR ORGANISER NAME
 
 const columnsToShow = [
     {
@@ -55,14 +52,6 @@ const columnsToShow = [
     }
 ];
 
-const extractKeyValueFromArray = (array, key) => {
-    let values = [];
-    array.map(item => {
-        values.push(item[key]);
-    });
-    return values;
-};
-
 const style = {
     hrStyle: {
         display: 'block',
@@ -76,27 +65,6 @@ const style = {
     }
 };
 
-const setUpBootstrapTable = (columnsToShow, isSortable, classNameForCells) => {
-    let tableColumnData = [];
-    columnsToShow.forEach(column => {
-        tableColumnData.push({
-            dataField: column.fieldName,
-            text: column.aliasName,
-            sort: !!isSortable,
-            classes: classNameForCells
-        })
-    });
-    return tableColumnData;
-};
-
-const generateFirebaseWritableObject = (object, columnNames) => {
-    let returnObject = {};
-    columnNames.map(item => {
-        returnObject[item] = object[item]
-    });
-    return returnObject;
-};
-
 // Form component
 class CreateEvent extends Component {
     constructor() {
@@ -104,18 +72,21 @@ class CreateEvent extends Component {
         this.state = {
             organiserName: '',
             location: "",
-            time: "",
+            time: eventSlotList[6].slot,
             date: getISOFormattedTodayDate(),
             participants: "",
             eventCreationTimeStamp: "",
-            tableData: []
+            tableData: [],
+            registeredUsers: {}
         };
         this.setInitialState = this.setInitialState.bind(this);
         this.setInitialState();
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.getRegisteredUsersName = this.getRegisteredUsersName.bind(this);
         this.updateCreatedEvents = this.updateCreatedEvents.bind(this);
         this.setInitialState();
+        this.getRegisteredUsersName();
         this.updateCreatedEvents();
     }
 
@@ -123,29 +94,33 @@ class CreateEvent extends Component {
         this.setState({
             organiserName: '',
             location: "",
-            time: "",
-            date: getTodayDate(),
+            time: eventSlotList[6].slot,
+            date: getISOFormattedTodayDate(),
             participants: "",
             eventCreationTimeStamp: ""
         });
     }
 
     handleChange(e) {
-        if (e.target.name === "organiserName") {
-            this.state.participants = e.target.value;
-        }
-        if (e.target.name === "participants") {
-            if (this.state.participants.substr(0, this.state.organiserName.length) === this.state.organiserName) {
-                this.setState({
-                    participants: e.target.value
-                })
+        if (e.target.name === "organiserNameAndEmail") {
+            let modifiedTargetValue = e.target.value.split(',')[0].substr(6);
+            this.state.organiserName = modifiedTargetValue;
+            this.state.participants = modifiedTargetValue;
+            this.state.organiserName = modifiedTargetValue;
+        } else{
+            if (e.target.name === "participants") {
+                if (this.state.participants.substr(0, this.state.organiserName.length) === this.state.organiserName) {
+                    this.setState({
+                        participants: e.target.value
+                    })
+                } else {
+                    this.setState({
+                        participants: this.state.organiserName
+                    })
+                }
             } else {
-                this.setState({
-                    participants: this.state.organiserName
-                })
+                this.setState({[e.target.name]: e.target.value});
             }
-        } else {
-            this.setState({[e.target.name]: e.target.value});
         }
     }
 
@@ -153,10 +128,9 @@ class CreateEvent extends Component {
         e.preventDefault();
         let dataToWrite = generateFirebaseWritableObject(this.state, extractKeyValueFromArray(columnsToShow, 'fieldName'));
         dataToWrite[CREATE_EVENT_FORM_MEMBERS_NAME.EVENT_CREATION_TIMESTAMP] = getTodayDate()+' '+getCurrentTime();
-        Database.writeToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.organiserName, dataToWrite);
+        Database.pushToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.organiserName, dataToWrite);
         this.updateCreatedEvents();
         this.setInitialState();
-        console.log(this.state);
     }
 
     updateCreatedEvents() {
@@ -184,6 +158,28 @@ class CreateEvent extends Component {
         }
     }
 
+    getRegisteredUsersName(){
+        let arrayTableData, databaseTableData,
+            ref = Database.getInstance().ref().child(DATABASE_TABLES.USER_PROFILE);
+        if (ref) {
+            ref.on('value', (data) => {
+                arrayTableData = [];
+                databaseTableData = data.val();
+                if (databaseTableData) {
+                    Object.keys(databaseTableData).forEach(entry => {
+                        let rowObject= {}, entryItemDetail = databaseTableData[entry];
+                        rowObject["name"] = 'Name: '+ entryItemDetail["name"]+', Email: '+entryItemDetail["email"];
+                        arrayTableData.push(rowObject);
+                    });
+                    this.setState({
+                        registeredUsers: arrayTableData
+                    });
+                    console.log('state is ', this.state);
+                }
+            });
+        }
+    }
+
     render() {
         return (
             <div>
@@ -193,9 +189,16 @@ class CreateEvent extends Component {
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Group>
                             <Form.Label>Event Organiser</Form.Label>
-                            <Form.Control name="organiserName" placeholder="Organiser"
-                                          onChange={this.handleChange} required={true}
-                                          value={this.state.organiserName}/>
+                            {/*<Form.Control  name="organiserName" placeholder="Organiser"*/}
+                            {/*               onChange={this.handleChange} required={true}*/}
+                            {/*               value={this.state.organiserName}>*/}
+                            {/*    {createFormControlSelectOptions(this.state.registeredUsers, 'name')}*/}
+                            {/*</Form.Control>*/}
+
+                            <Form.Control name="organiserNameAndEmail" as="select" onChange={this.handleChange}
+                                          required={true}>
+                                {createFormControlSelectOptions(this.state.registeredUsers, 'name')}
+                            </Form.Control>
                         </Form.Group>
 
                         <Form.Row>

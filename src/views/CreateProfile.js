@@ -58,7 +58,7 @@ class CreateProfile extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        Database.writeToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.eventorganiserName, {
+        Database.pushToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.eventorganiserName, {
             eventorganiserName: this.state.eventorganiserName,
             eventLocation: this.state.eventLocation,
             eventTime: this.state.eventTime,

@@ -1,8 +1,75 @@
 import React, {Component} from "react";
 import {Button, Col, Form} from "react-bootstrap";
-import CustomisedEditableTable from "../components/CustomisedEditableTable";
 import Database from "../database/firebasedb/Database";
 import {DATABASE_TABLES} from "../constants/OtherConstants";
+import {extractKeyValueFromArray, generateFirebaseWritableObject} from "../Utils";
+import {MessageContent, MessageHeader} from "semantic-ui-react";
+
+const CREATE_ADD_USER_FORM_MEMBERS_NAME = {
+    NAME: 'name',
+    CONTACT: 'contact',
+    STATUS: 'status',
+    CHAT_ID: 'chatId',
+    WALLET_BALANCE: 'walletBalance',
+    REGISTERED_EVENTS: 'registeredEvents',
+    LAST_10_GAMES_PLAYED: 'last10gamesPlayed',
+    EXTRAS: 'extras',
+    ADDRESS: 'address',
+    EMAIL: 'email',
+    WHATSAPP_ID: 'whatsappId',
+    PASSWORD: 'password'
+};
+
+const columnsToShow = [
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.NAME,
+        aliasName: 'Name'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.CONTACT,
+        aliasName: 'Contact'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.STATUS,
+        aliasName: 'Status'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.CHAT_ID,
+        aliasName: 'ChatId'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.WALLET_BALANCE,
+        aliasName: 'Wallet Balance'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.REGISTERED_EVENTS,
+        aliasName: 'Registered Events'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.LAST_10_GAMES_PLAYED,
+        aliasName: 'Contact'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.EXTRAS,
+        aliasName: 'Status'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.ADDRESS,
+        aliasName: 'ChatId'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.EMAIL,
+        aliasName: 'Wallet Balance'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.WHATSAPP_ID,
+        aliasName: 'Registered Events'
+    },
+    {
+        fieldName: CREATE_ADD_USER_FORM_MEMBERS_NAME.PASSWORD,
+        aliasName: 'Password'
+    }
+];
 
 class AddUser extends Component {
     constructor() {
@@ -18,108 +85,182 @@ class AddUser extends Component {
             extras: "",
             address: "",
             email: "",
-            whatsappId: ""
+            whatsappId: "",
+            formSuccess: false,
+            password: ""
         };
         this.handleChange = this.handleChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.setInitialState = this.setInitialState.bind(this);
     }
 
-    onSubmit() {
+    setInitialState() {
+        this.setState({
+            name: "",
+            contact: "",
+            status: '',
+            chatId: "",
+            walletBalance: 0,
+            registeredEvents: 0,
+            last10gamesPlayed: 0,
+            extras: "",
+            address: "",
+            email: "",
+            whatsappId: "",
+            password: ""
+        });
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        let dataToWrite = generateFirebaseWritableObject(this.state, extractKeyValueFromArray(columnsToShow, 'fieldName'));
+        Database.setToDatabase(DATABASE_TABLES.USER_PROFILE, this.state.contact, dataToWrite);
+        //this.updateCreatedEvents();
+        this.setInitialState();
+        this.state.formSuccess = true;
     }
 
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value});
     }
 
-    updateUserInfo() {
-        let ref = Database.getInstance().ref().child(DATABASE_TABLES.USER_INFOS);
-        let listArray, counter, arrayBootstrapTableData;
-        ref.on('value', (data) => {
-            counter = 1;
-            listArray = [];
-            arrayBootstrapTableData = [];
-            var databaseTable = data.val();
-            if (databaseTable) {
-                var keys = Object.keys(databaseTable);
-                if (keys) {
-                    for (let i = 0; i < keys.length; i++) {
-                        var organiserName = keys[i];
-                        var eventsByOrganiser = databaseTable[organiserName];
-                        var keyseventsByOrganiser = Object.keys(eventsByOrganiser);
-                        for (let j = 0; j < keyseventsByOrganiser.length; j++) {
-                            var keysEventDetails = Object.keys(eventsByOrganiser[keyseventsByOrganiser[j]]);
-                            let tempArray = [], bootstrapTableElementItem = {
-                                SNo: counter++,
-                                OrganiserName: eventsByOrganiser[keyseventsByOrganiser[j]]["eventorganiserName"],
-                                Location: eventsByOrganiser[keyseventsByOrganiser[j]]["eventLocation"],
-                                Time: eventsByOrganiser[keyseventsByOrganiser[j]]["eventTime"],
-                                Date: eventsByOrganiser[keyseventsByOrganiser[j]]["eventDate"],
-                                Participants: eventsByOrganiser[keyseventsByOrganiser[j]]["eventParticipants"],
-                                CreatedAt: eventsByOrganiser[keyseventsByOrganiser[j]]["eventCreatedAt"]
-
-                            };
-                            arrayBootstrapTableData.push(bootstrapTableElementItem);
-                        }
-                    }
+    updateCreatedEvents() {
+        let arrayTableData, databaseTableData,
+            ref = Database.getInstance().ref().child(DATABASE_TABLES.USER_PROFILE);
+        if (ref) {
+            ref.on('value', (data) => {
+                arrayTableData = [];
+                databaseTableData = data.val();
+                if (databaseTableData) {
+                    Object.keys(databaseTableData).forEach(entry => {
+                        Object.keys(databaseTableData[entry]).forEach(entryItem => {
+                            let tableRow = {}, entryItemDetail = databaseTableData[entry][entryItem];
+                            extractKeyValueFromArray(columnsToShow, 'fieldName').forEach(columnName => {
+                                tableRow[columnName] = entryItemDetail[columnName];
+                            });
+                            arrayTableData.push(tableRow);
+                        })
+                    });
                     this.setState({
-                        databaseElements: listArray,
-                        bootstrapTableDatabaseElements: arrayBootstrapTableData
+                        tableData: arrayTableData
                     });
                 }
-            }
-        });
+            });
+        }
     }
 
     render() {
         return (
             <div>
                 <div className="col-md-8 offset-md-2">
-                    <h2>Membership Zone</h2>
+                    <h2 style={{textAlign: 'center'}}>Membership Zone</h2>
 
-                    <Form onSubmit={this.onSubmit}>
+                    <Form onSubmit={this.handleSubmit} success={this.state.formSuccess} error={this.state.formError}>
                         <Form.Row>
                             <Form.Group as={Col}>
                                 <Form.Label>Name</Form.Label>
-                                <Form.Control id="formGridName" placeholder="Enter your Name" required={true}/>
-                            </Form.Group>
-                            <Form.Group as={Col}>
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control id="formGridEmail" type="email" placeholder="Enter email"
-                                              required={true}/>
+                                <Form.Control onChange={this.handleChange}
+                                              value={this.state[CREATE_ADD_USER_FORM_MEMBERS_NAME.NAME]}
+                                              name={CREATE_ADD_USER_FORM_MEMBERS_NAME.NAME}
+                                              placeholder="Enter your Name" required={true}/>
                             </Form.Group>
 
+                        </Form.Row>
+
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control onChange={this.handleChange}
+                                              value={this.state[CREATE_ADD_USER_FORM_MEMBERS_NAME.EMAIL]}
+                                              name={CREATE_ADD_USER_FORM_MEMBERS_NAME.EMAIL} type="email"
+                                              placeholder="Enter email"
+                                              required={true}/>
+                            </Form.Group>
+                            <Form.Group as={Col}>
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" onChange={this.handleChange}
+                                              value={this.state[CREATE_ADD_USER_FORM_MEMBERS_NAME.PASSWORD]}
+                                              name={CREATE_ADD_USER_FORM_MEMBERS_NAME.PASSWORD} placeholder="Password "
+                                              required={true}/>
+                            </Form.Group>
                         </Form.Row>
 
                         <Form.Row>
                             <Form.Group as={Col}>
                                 <Form.Label>Contact</Form.Label>
-                                <Form.Control id="formGridContact" type="contact" placeholder="+49123456789"
+                                <Form.Control onChange={this.handleChange}
+                                              value={this.state[CREATE_ADD_USER_FORM_MEMBERS_NAME.CONTACT]}
+                                              name={CREATE_ADD_USER_FORM_MEMBERS_NAME.CONTACT} type="contact"
+                                              placeholder="+49123456789"
                                               required={true}/>
                             </Form.Group>
                             <Form.Group as={Col}>
                                 <Form.Label>WhatsappChat ID</Form.Label>
-                                <Form.Control id="formGridWhatsAppChat" type="url" placeholder="WhatsappContact"
+                                <Form.Control onChange={this.handleChange}
+                                              value={this.state[CREATE_ADD_USER_FORM_MEMBERS_NAME.WHATSAPP_ID]}
+                                              name={CREATE_ADD_USER_FORM_MEMBERS_NAME.WHATSAPP_ID}
+                                              placeholder="WhatsappContact"
                                               required="optional"/>
                             </Form.Group>
-
                         </Form.Row>
 
                         <Form.Group>
                             <Form.Label>Address</Form.Label>
-                            <Form.Control id="formGridAddress" placeholder="1234 Main St" required={true}/>
+                            <Form.Control onChange={this.handleChange}
+                                          value={this.state[CREATE_ADD_USER_FORM_MEMBERS_NAME.ADDRESS]}
+                                          name={CREATE_ADD_USER_FORM_MEMBERS_NAME.ADDRESS} placeholder="1234 Main St"
+                                          required={true}/>
                         </Form.Group>
 
-                        <Button variant="primary" type="submit">
-                            Submit
-                        </Button>
+                        <Form.Row style={{textAlign: 'center'}}>
+                            <Form.Group as={Col}>
+                                <Button variant="primary" type="submit">
+                                    Submit
+                                </Button>
+
+                            </Form.Group>
+                        </Form.Row>
                     </Form>
 
-                </div>
+                    <div>
+                        {
+                            this.state.formSuccess ? <SuccessfulMessage/>: <p/>
+                        }
+                    </div>
 
-                <CustomisedEditableTable/>
+                </div>
             </div>
         )
     }
 }
+
+const SuccessfulMessage = (props) => ({
+    render: function () {
+        return (
+            <div className="ui success message">
+                <i className="close icon"></i>
+                <div className="header">
+                    Your user registration was successful.
+                </div>
+                <p>You may now log-in with the username and password you have chosen</p>
+            </div>        );
+    }
+});
+
+const ErrorMessage = (props) => ({
+    render: function () {
+        return (
+            <div className="ui negative message">
+                <i className="close icon"></i>
+                <div className="header">
+                    There was a problem in Account Creation.
+                </div>
+                <p>Please check if you have correctly filled all the fields or report this to us.
+                </p></div>
+        );
+    }
+});
+
+
 
 export default AddUser;

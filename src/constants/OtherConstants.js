@@ -1,4 +1,4 @@
 export const DATABASE_TABLES = {
-    USER_INFOS : "USER_INFO",
+    USER_PROFILE : "USER_PROFILE",
     EVENT_INFO : "EVENT_INFO"
 };
