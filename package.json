@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "firebase": "^7.8.2",
+    "firebaseui": "^4.4.0",
     "react-bootstrap-table-next": "^3.3.5",
     "react-bootstrap-table2-editor": "^1.4.0",
     "react-bootstrap-table2-overlay": "^2.0.0",

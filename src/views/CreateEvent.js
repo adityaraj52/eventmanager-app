@@ -24,6 +24,7 @@ const CREATE_EVENT_FORM_MEMBERS_NAME = {
 // TO ALLOW USERS TO POSTPAY FOR THE EVENT
 // PRICE FOR THE EVENT
 // DROPDOWN FOR ORGANISER NAME
+// Add Methods to fetch specific information from database like get user profileInfo and so on
 
 const columnsToShow = [
     {
@@ -71,13 +72,15 @@ class CreateEvent extends Component {
         super();
         this.state = {
             organiserName: '',
+            authenticationPin: '',
             location: "",
             time: eventSlotList[6].slot,
             date: getISOFormattedTodayDate(),
             participants: "",
             eventCreationTimeStamp: "",
             tableData: [],
-            registeredUsers: {}
+            registeredUsers: {},
+            isAuthenticatedUser: false
         };
         this.setInitialState = this.setInitialState.bind(this);
         this.setInitialState();
@@ -101,9 +104,13 @@ class CreateEvent extends Component {
         });
     }
 
+    isUserAuthenticated(){
+
+    }
+
     handleChange(e) {
         if (e.target.name === "organiserNameAndEmail") {
-            let modifiedTargetValue = e.target.value.split(',')[0].substr(6);
+            let modifiedTargetValue = e.target.value.split(',')[0] ;
             this.state.organiserName = modifiedTargetValue;
             this.state.participants = modifiedTargetValue;
             this.state.organiserName = modifiedTargetValue;
@@ -126,6 +133,7 @@ class CreateEvent extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
+
         let dataToWrite = generateFirebaseWritableObject(this.state, extractKeyValueFromArray(columnsToShow, 'fieldName'));
         dataToWrite[CREATE_EVENT_FORM_MEMBERS_NAME.EVENT_CREATION_TIMESTAMP] = getTodayDate()+' '+getCurrentTime();
         Database.pushToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.organiserName, dataToWrite);
@@ -168,7 +176,7 @@ class CreateEvent extends Component {
                 if (databaseTableData) {
                     Object.keys(databaseTableData).forEach(entry => {
                         let rowObject= {}, entryItemDetail = databaseTableData[entry];
-                        rowObject["name"] = 'Name: '+ entryItemDetail["name"]+', Email: '+entryItemDetail["email"];
+                        rowObject["name"] = entryItemDetail["name"]+', e: '+entryItemDetail["email"];
                         arrayTableData.push(rowObject);
                     });
                     this.setState({
@@ -187,19 +195,25 @@ class CreateEvent extends Component {
                     <h2 style={{textAlign: 'center'}}>Add a new Event</h2>
                     <hr style={style.hrStyle}/>
                     <Form onSubmit={this.handleSubmit}>
-                        <Form.Group>
-                            <Form.Label>Event Organiser</Form.Label>
-                            {/*<Form.Control  name="organiserName" placeholder="Organiser"*/}
-                            {/*               onChange={this.handleChange} required={true}*/}
-                            {/*               value={this.state.organiserName}>*/}
-                            {/*    {createFormControlSelectOptions(this.state.registeredUsers, 'name')}*/}
-                            {/*</Form.Control>*/}
 
-                            <Form.Control name="organiserNameAndEmail" as="select" onChange={this.handleChange}
-                                          required={true}>
-                                {createFormControlSelectOptions(this.state.registeredUsers, 'name')}
-                            </Form.Control>
-                        </Form.Group>
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                                <Form.Label>Event Organiser</Form.Label>
+                                <Form.Control name="organiserNameAndEmail" as="select" onChange={this.handleChange}
+                                              required={true}>
+                                    {createFormControlSelectOptions(this.state.registeredUsers, 'name')}
+                                </Form.Control>
+                            </Form.Group>
+
+                            <Form.Group as={Col}>
+                                <Form.Label>Authentication Pin</Form.Label>
+                                <Form.Control name="authenticationPin" placeholder="Your Authentication Pin"
+                                              onChange={this.handleChange} value={this.state.authenticationPin} type={"password"}
+                                              required={true}>
+                                </Form.Control>
+                            </Form.Group>
+
+                        </Form.Row>
 
                         <Form.Row>
                             <Form.Group as={Col}>
@@ -209,11 +223,6 @@ class CreateEvent extends Component {
                                               required={true}>
                                 </Form.Control>
                             </Form.Group>
-                        </Form.Row>
-
-                        <Form.Row>
-                        </Form.Row>
-                        <Form.Row>
                             <Form.Group as={Col}>
                                 <Form.Label>Time</Form.Label>
 
@@ -222,6 +231,12 @@ class CreateEvent extends Component {
                                     {createFormControlSelectOptions(eventSlotList, 'slot')}
                                 </Form.Control>
                             </Form.Group>
+                        </Form.Row>
+
+                        <Form.Row>
+                        </Form.Row>
+                        <Form.Row>
+
                         </Form.Row>
 
                         <Form.Row>

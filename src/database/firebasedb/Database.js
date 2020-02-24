@@ -3,6 +3,11 @@ import {Component} from "react";
 import {DATABASE_TABLES} from "../../constants/OtherConstants";
 import {isSet, verifyKeyExistsInObject} from "../../Utils";
 
+var firebaseui = require('firebaseui');
+var ui = new firebaseui.auth.AuthUI(Firebase.auth());
+
+
+
 const databaseConfig = {
     apiKey: "AIzaSyBfxkMvtNqFqNaG0Q0Da6Uo4fSCXGLlSOg",
     authDomain: "my-project-1497208081606.firebaseapp.com",
