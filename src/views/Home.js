@@ -25,22 +25,21 @@ const style = {
 };
 
 const Home = (props) => (
-    <Jumbotron fluid style={{padding:'20px'}}>
-        <Container fluid>
+    <Container fluid >
+        <div style={{textAlign: 'center', padding: '20px'}}>
             <h1>Organise your Events and Meetings</h1>
             <p>
                 It's time to say goodbye to other planners. Event Tracker is everything your paper planner is and more. Event Tracker has it covered on all of your devices. Oh, and did we mention it's free?
             </p>
-        </Container>
-         <Row className="justify-content-md-center" style={{textAlign: 'center'}}>
-             <Col xs lg="6" className="justify-content-md-center" style={{textAlign: 'center'}}>
-                 <a className="btn" style={style.btnStyle} href='/CreateEvent' >
-                     Get Started
-                 </a>
-             </Col>
-         </Row>
+            <div className="justify-content-md-center" style={{textAlign: 'center'}}>
+                    <a className="btn" style={style.btnStyle} href='/CreateEvent' >
+                        Get Started
+                    </a>
+            </div>
+        </div>
+
         <hr/>
-        <Container fluid>
+        <div>
             <Col>
             <Row>
                 <Col>
@@ -55,8 +54,8 @@ const Home = (props) => (
             </Row>
             <Row>
                 <Col>
-                    <h3><i style={{color: 'green'}} className="fas fa-stopwatch"><span style={{color:'black', fontWeight: 500}}>&nbsp;Remind</span></i></h3>
-                    <p>Reminds atendees ahead of schdeuled event. Get notified about upcoming events with email push notifications.</p>
+                    <h3><i style={{color: 'green'}} className="fas fa-stopwatch"><span style={{color:'black', fontWeight: 500}}>&nbsp;Reminders</span></i></h3>
+                    <p>Reminds atendees ahead of schdeuled event. Get notified about upcoming events with email push notifications and other subscribed options.</p>
 
                 </Col>
                 <Col>
@@ -65,8 +64,8 @@ const Home = (props) => (
                 </Col>
             </Row>
             </Col>
-        </Container>
-    </Jumbotron>
+        </div>
+    </Container>
 );
 
 export default Home;

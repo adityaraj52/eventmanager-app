@@ -1,38 +1,66 @@
-import React from 'react';
-import './App.css';
+import React, {Component} from 'react';
 import {Provider} from "react-redux";
 import store from "../store";
-import BasicHeader from "../components/BasicHeader";
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
-import {HOME, CREATE_EVENT, ADD_USER, EXISTING_USER, PAGE_NOT_AVAILABLE} from "../constants/routes";
+import Navigation from "../components/Navigation";
+import {withFirebase} from '../components/Firebase';
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import {
+    CREATE_EVENT,
+    EXISTING_USER,
+    HOME,
+    PAGE_NOT_AVAILABLE,
+    SIGN_IN,
+    SIGN_UP,
+    USER_PROFILE
+} from "../constants/routes";
 import Home from "../views/Home";
 import CreateEvent from "../views/CreateEvent";
+import UserProfile from "../views/UserProfile";
 import ExistingUser from "../views/ExistingUser";
-import AddUser from "../views/AddUser";
 import PageNotAvailable from "../views/PageNotAvailable";
+import SignUp from "../views/SignUp";
+import SignIn from "../views/SignIn";
 
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            authUser: null,
+        };
+    }
 
-function App() {
-  return (
-      <Provider store={store}>
-        <div className="App" style={{ position: 'relative',minHeight: '100vh', backgroundColor: '#E9ECEF'}}>
+    componentDidMount() {
+        this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
+            authUser
+                ? this.setState({authUser})
+                : this.setState({authUser: null});
+        });
+    }
 
-            <BrowserRouter>
+    componentWillUnmount() {
+        this.listener();
+    }
+
+    render() {
+        return (
+            <Provider store={store}>
                 <div>
-
-                    <BasicHeader/>
+                    <Navigation/>
+                    <BrowserRouter>
                     <Switch>
                         <Route exact path={HOME} component={Home}/>
                         <Route exact path={CREATE_EVENT} component={CreateEvent}/>
-                        <Route exact path={ADD_USER} component={AddUser}/>
+                        <Route exact path={USER_PROFILE} component={UserProfile}/>
                         <Route exact path={EXISTING_USER} component={ExistingUser}/>
                         <Route exact path={PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
+                        <Route exact path={SIGN_UP} component={SignUp}/>
+                        <Route exact path={SIGN_IN} component={SignIn}/>
                     </Switch>
+                    </BrowserRouter>
                 </div>
-            </BrowserRouter>
-        </div>
-      </Provider>
-  );
+            </Provider>
+        );
+    }
 }
 
-export default App;
+export default withFirebase(App);

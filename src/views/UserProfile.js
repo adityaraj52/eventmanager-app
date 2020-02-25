@@ -71,7 +71,7 @@ const columnsToShow = [
     }
 ];
 
-class AddUser extends Component {
+class UserProfile extends Component {
     constructor() {
         super();
         this.state = {
@@ -263,4 +263,4 @@ const ErrorMessage = (props) => ({
 
 
 
-export default AddUser;
+export default UserProfile;

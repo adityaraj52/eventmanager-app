@@ -2,14 +2,18 @@ import React, {Component} from "react";
 import {Button, Col, Form} from "react-bootstrap";
 import {eventSlotList} from "../database/readabledatabase/eventList.js"
 import {
-    createFormControlSelectOptions, extractKeyValueFromArray,
-    generateFirebaseWritableObject, getCurrentTime,
+    createFormControlSelectOptions,
+    extractKeyValueFromArray,
+    generateFirebaseWritableObject,
+    getCurrentTime,
     getISOFormattedTodayDate,
-    getTodayDate, setUpBootstrapTable
+    getTodayDate,
+    setUpBootstrapTable
 } from "../Utils";
 import Database from "../database/firebasedb/Database";
 import {DATABASE_TABLES} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
+import firebase from "firebase";
 
 const CREATE_EVENT_FORM_MEMBERS_NAME = {
     ORGANISER_NAME: "organiserName",
@@ -104,17 +108,17 @@ class CreateEvent extends Component {
         });
     }
 
-    isUserAuthenticated(){
+    isUserAuthenticated() {
 
     }
 
     handleChange(e) {
         if (e.target.name === "organiserNameAndEmail") {
-            let modifiedTargetValue = e.target.value.split(',')[0] ;
+            let modifiedTargetValue = e.target.value.split(',')[0];
             this.state.organiserName = modifiedTargetValue;
             this.state.participants = modifiedTargetValue;
             this.state.organiserName = modifiedTargetValue;
-        } else{
+        } else {
             if (e.target.name === "participants") {
                 if (this.state.participants.substr(0, this.state.organiserName.length) === this.state.organiserName) {
                     this.setState({
@@ -133,17 +137,16 @@ class CreateEvent extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-
         let dataToWrite = generateFirebaseWritableObject(this.state, extractKeyValueFromArray(columnsToShow, 'fieldName'));
-        dataToWrite[CREATE_EVENT_FORM_MEMBERS_NAME.EVENT_CREATION_TIMESTAMP] = getTodayDate()+' '+getCurrentTime();
+        dataToWrite[CREATE_EVENT_FORM_MEMBERS_NAME.EVENT_CREATION_TIMESTAMP] = getTodayDate() + ' ' + getCurrentTime();
         Database.pushToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.organiserName, dataToWrite);
         this.updateCreatedEvents();
         this.setInitialState();
     }
 
     updateCreatedEvents() {
-        let arrayTableData, databaseTableData,
-            ref = Database.getInstance().ref().child(DATABASE_TABLES.EVENT_INFO);
+        let arrayTableData, databaseTableData;
+        let ref = firebase.database().ref().child(DATABASE_TABLES.EVENT_INFO);
         if (ref) {
             ref.on('value', (data) => {
                 arrayTableData = [];
@@ -166,17 +169,17 @@ class CreateEvent extends Component {
         }
     }
 
-    getRegisteredUsersName(){
+    getRegisteredUsersName() {
         let arrayTableData, databaseTableData,
-            ref = Database.getInstance().ref().child(DATABASE_TABLES.USER_PROFILE);
+            ref = firebase.database().ref().child(DATABASE_TABLES.USER_PROFILE);
         if (ref) {
             ref.on('value', (data) => {
                 arrayTableData = [];
                 databaseTableData = data.val();
                 if (databaseTableData) {
                     Object.keys(databaseTableData).forEach(entry => {
-                        let rowObject= {}, entryItemDetail = databaseTableData[entry];
-                        rowObject["name"] = entryItemDetail["name"]+', e: '+entryItemDetail["email"];
+                        let rowObject = {}, entryItemDetail = databaseTableData[entry];
+                        rowObject["name"] = entryItemDetail["name"] + ', e: ' + entryItemDetail["email"];
                         arrayTableData.push(rowObject);
                     });
                     this.setState({
@@ -208,7 +211,8 @@ class CreateEvent extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label>Authentication Pin</Form.Label>
                                 <Form.Control name="authenticationPin" placeholder="Your Authentication Pin"
-                                              onChange={this.handleChange} value={this.state.authenticationPin} type={"password"}
+                                              onChange={this.handleChange} value={this.state.authenticationPin}
+                                              type={"password"}
                                               required={true}>
                                 </Form.Control>
                             </Form.Group>
@@ -235,9 +239,6 @@ class CreateEvent extends Component {
 
                         <Form.Row>
                         </Form.Row>
-                        <Form.Row>
-
-                        </Form.Row>
 
                         <Form.Row>
                             <Form.Group as={Col}>
@@ -249,7 +250,6 @@ class CreateEvent extends Component {
                                 </label>
                             </Form.Group>
                         </Form.Row>
-
 
                         <Form.Row>
                             <Form.Group as={Col}>
@@ -265,14 +265,12 @@ class CreateEvent extends Component {
                                 <Button variant="primary" type="submit">
                                     Submit
                                 </Button>
-
                             </Form.Group>
                         </Form.Row>
                     </Form>
 
                     <h2 style={{textAlign: 'center'}}>Existing Events</h2>
                     <hr style={style.hrStyle}/>
-
                     <div className="">
                         <table className="table-responsive table-light">
                             <BootstrapTable keyField='createdAt'
