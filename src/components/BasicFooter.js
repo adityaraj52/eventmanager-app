@@ -16,14 +16,14 @@ const style = {
 // Wire it up together, check types and export
 const BasicFooter = () => (
     <div>
-    <div style={style.footerStyle} bg="dark" variant="dark">
+        <div style={style.footerStyle} bg="dark" variant="dark">
 
-        <span>Kontakt</span>
-        &nbsp;
-        &nbsp;&nbsp;
-        <span>Last Visited: {new Date().toLocaleString()}</span>
+            <span>Kontakt</span>
+            &nbsp;
+            &nbsp;&nbsp;
+            <span>Last Visited: {new Date().toLocaleString()}</span>
 
-    </div>
+        </div>
     </div>
 );
 

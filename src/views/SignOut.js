@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
 import * as ROUTES from '../constants/routes';
-import {Button, Col, Container, Form, Jumbotron, Row} from "react-bootstrap";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {style} from "../constants/OtherConstants";
 import {Link} from "react-router-dom";
 
@@ -46,7 +46,7 @@ class SignInFormBase extends Component {
             <div>
                 <Container>
                     <Row className="justify-content-md-center">
-                        <Col xs lg="6" className="justify-content-md-center" >
+                        <Col xs lg="6" className="justify-content-md-center">
                             <h2 style={{textAlign: 'center'}}>Sign In</h2>
                             <hr style={style.hrStyle}/>
                             <Form onSubmit={this.onSubmit} className="justify-content-md-center">

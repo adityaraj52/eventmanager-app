@@ -1,8 +1,7 @@
 import React from "react";
-import {DATABASE_TABLES} from "../constants/OtherConstants";
 
-export const createFormControlSelectOptions = (dataArray, keyName, valueName= keyName) => {
-    let  formControlSelectOptions = [];
+export const createFormControlSelectOptions = (dataArray, keyName, valueName = keyName) => {
+    let formControlSelectOptions = [];
     if (dataArray && dataArray.length) {
         dataArray.forEach(data => (
             formControlSelectOptions.push(
@@ -20,25 +19,27 @@ export const createFormControlSelectOptions = (dataArray, keyName, valueName= ke
 };
 
 export const yesnoSelectOption = [
-    {key:"Yes", value:"Yes"},
-    {key:"No", value:"No"},
-    {key:"Not Sure", value:"Not Sure"}
+    {key: "Yes", value: "Yes"},
+    {key: "No", value: "No"},
+    {key: "Not Sure", value: "Not Sure"}
 ];
 
 export const verifyKeyExistsInObject = (key, object) => {
     for (let keyname in object) {
-        if(keyname === key)
+        if (keyname === key)
             return true;
     }
     return false;
 };
 
 export const isSet = (object) => {
-    if(object == null || !object)
+    if (object == null || !object)
         return false;
     switch (typeof object) {
-        case "string": return object.trim().length > 0;
-        default: return true;
+        case "string":
+            return object.trim().length > 0;
+        default:
+            return true;
     }
 }
 
@@ -52,7 +53,7 @@ export const getISOFormattedTodayDate = () => {
 };
 
 export const getCurrentTime = () => {
-    return new Date().toUTCString().substr(17,5).split(' ').join(' ');
+    return new Date().toUTCString().substr(17, 5).split(' ').join(' ');
 };
 
 export const generateFirebaseWritableObject = (object, columnNames) => {

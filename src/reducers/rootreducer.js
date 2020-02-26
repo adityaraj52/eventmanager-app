@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux';
-import createEventReducer from "./createEventReducer";
+import userAuthorisationReducer from './userAuthorisationReducer';
 
 
 export default combineReducers({
-    eventPostREducer: createEventReducer
+    userAuthorised: userAuthorisationReducer
 });

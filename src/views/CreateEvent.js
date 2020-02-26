@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, Col, Form} from "react-bootstrap";
-import {eventSlotList} from "../database/readabledatabase/eventList.js"
+import {eventSlotList} from "../constants/eventList.js"
 import {
     createFormControlSelectOptions,
     extractKeyValueFromArray,
@@ -10,10 +10,10 @@ import {
     getTodayDate,
     setUpBootstrapTable
 } from "../Utils";
-import Database from "../database/firebasedb/Database";
 import {DATABASE_TABLES} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
 import firebase from "firebase";
+import {withFirebase} from '../components/Firebase';
 
 const CREATE_EVENT_FORM_MEMBERS_NAME = {
     ORGANISER_NAME: "organiserName",
@@ -84,32 +84,33 @@ class CreateEvent extends Component {
             eventCreationTimeStamp: "",
             tableData: [],
             registeredUsers: {},
-            isAuthenticatedUser: false
+            isAuthenticatedUser: false,
+            eventCost: '',
+            splitRatio: ''
         };
         this.setInitialState = this.setInitialState.bind(this);
-        this.setInitialState();
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getRegisteredUsersName = this.getRegisteredUsersName.bind(this);
         this.updateCreatedEvents = this.updateCreatedEvents.bind(this);
-        this.setInitialState();
+    }
+
+    componentWillMount() {
         this.getRegisteredUsersName();
         this.updateCreatedEvents();
     }
 
     setInitialState() {
         this.setState({
-            organiserName: '',
+            organiserName: "",
             location: "",
             time: eventSlotList[6].slot,
             date: getISOFormattedTodayDate(),
             participants: "",
-            eventCreationTimeStamp: ""
+            eventCreationTimeStamp: "",
+            eventCost: '',
+            splitRatio: ''
         });
-    }
-
-    isUserAuthenticated() {
-
     }
 
     handleChange(e) {
@@ -133,20 +134,23 @@ class CreateEvent extends Component {
                 this.setState({[e.target.name]: e.target.value});
             }
         }
+
     }
 
     handleSubmit(e) {
         e.preventDefault();
         let dataToWrite = generateFirebaseWritableObject(this.state, extractKeyValueFromArray(columnsToShow, 'fieldName'));
         dataToWrite[CREATE_EVENT_FORM_MEMBERS_NAME.EVENT_CREATION_TIMESTAMP] = getTodayDate() + ' ' + getCurrentTime();
-        Database.pushToDatabase(DATABASE_TABLES.EVENT_INFO, this.state.organiserName, dataToWrite);
+        dataToWrite[CREATE_EVENT_FORM_MEMBERS_NAME.ORGANISER_NAME] = this.props.firebase.auth.currentUser.displayName;
+        let ref = this.props.firebase.database.ref().child(DATABASE_TABLES.EVENT_INFO + '/' + this.props.firebase.auth.currentUser.email.split('@')[0]).push(dataToWrite);
         this.updateCreatedEvents();
         this.setInitialState();
     }
 
     updateCreatedEvents() {
         let arrayTableData, databaseTableData;
-        let ref = firebase.database().ref().child(DATABASE_TABLES.EVENT_INFO);
+        console.log('firebase database is', this.props)
+        let ref = this.props.firebase.database.ref().child(DATABASE_TABLES.EVENT_INFO);
         if (ref) {
             ref.on('value', (data) => {
                 arrayTableData = [];
@@ -167,6 +171,7 @@ class CreateEvent extends Component {
                 }
             });
         }
+
     }
 
     getRegisteredUsersName() {
@@ -201,26 +206,6 @@ class CreateEvent extends Component {
 
                         <Form.Row>
                             <Form.Group as={Col}>
-                                <Form.Label>Event Organiser</Form.Label>
-                                <Form.Control name="organiserNameAndEmail" as="select" onChange={this.handleChange}
-                                              required={true}>
-                                    {createFormControlSelectOptions(this.state.registeredUsers, 'name')}
-                                </Form.Control>
-                            </Form.Group>
-
-                            <Form.Group as={Col}>
-                                <Form.Label>Authentication Pin</Form.Label>
-                                <Form.Control name="authenticationPin" placeholder="Your Authentication Pin"
-                                              onChange={this.handleChange} value={this.state.authenticationPin}
-                                              type={"password"}
-                                              required={true}>
-                                </Form.Control>
-                            </Form.Group>
-
-                        </Form.Row>
-
-                        <Form.Row>
-                            <Form.Group as={Col}>
                                 <Form.Label>Event Location</Form.Label>
                                 <Form.Control name="location" placeholder="Event Location"
                                               onChange={this.handleChange} value={this.state.location}
@@ -248,6 +233,25 @@ class CreateEvent extends Component {
                                         borderRadius: '.25rem', marginRight: '0'
                                     }} onChange={this.handleChange} value={this.state.date} required={true}/>
                                 </label>
+                            </Form.Group>
+                        </Form.Row>
+
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                                <Form.Label>Event Cost</Form.Label>
+                                <Form.Control name="eventPrice" placeholder="Event Location"
+                                              onChange={this.handleChange} value={this.state.eventPrice}
+                                              required={true}>
+                                </Form.Control>
+                            </Form.Group>
+
+                            <Form.Group as={Col}>
+                                <Form.Label>Split Equally(1 true/ ratio)</Form.Label>
+
+                                <Form.Control type="number" max={1} min={0} name="splitRatio"
+                                              onChange={this.handleChange}
+                                              value={this.state.splitRatio} required={true}>
+                                </Form.Control>
                             </Form.Group>
                         </Form.Row>
 
@@ -284,4 +288,5 @@ class CreateEvent extends Component {
     }
 }
 
-export default CreateEvent;
+
+export default withFirebase(CreateEvent);

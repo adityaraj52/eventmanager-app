@@ -1,24 +1,20 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
 import * as ROUTES from '../constants/routes';
-import {Button, Col, Container, Form, Jumbotron, Row} from "react-bootstrap";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {style} from "../constants/OtherConstants";
 import {Link} from "react-router-dom";
 
-const SignIn = () => (
-    <div>
-        <SignInForm/>
-    </div>
-);
 const INITIAL_STATE = {
     email: '',
     password: '',
     error: null,
 };
 
-class SignInFormBase extends Component {
+class SignIn extends Component {
     constructor(props) {
         super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {...INITIAL_STATE};
     }
 
@@ -28,7 +24,8 @@ class SignInFormBase extends Component {
             .doSignInWithEmailAndPassword(email, password)
             .then(() => {
                 this.setState({...INITIAL_STATE});
-                // this.props.history.push(ROUTES.HOME);
+                // window.location.href = ROUTES.HOME;
+                this.props.history.push(ROUTES.HOME);
             })
             .catch(error => {
                 this.setState({error});
@@ -46,7 +43,7 @@ class SignInFormBase extends Component {
             <div>
                 <Container style={{padding: "20px"}}>
                     <Row className="justify-content-md-center">
-                        <Col xs lg="6" className="justify-content-md-center" >
+                        <Col xs lg="6" className="justify-content-md-center">
                             <h2 style={{textAlign: 'center'}}>Sign In</h2>
                             <hr style={style.hrStyle}/>
                             <Form onSubmit={this.handleSubmit} className="justify-content-md-center">
@@ -91,6 +88,4 @@ class SignInFormBase extends Component {
     }
 }
 
-const SignInForm = withFirebase(SignInFormBase);
-export default SignIn;
-export {SignInForm};
+export default withFirebase(SignIn);

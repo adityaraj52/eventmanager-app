@@ -1,6 +1,6 @@
 export const DATABASE_TABLES = {
-    USER_PROFILE : "USER_PROFILE",
-    EVENT_INFO : "EVENT_INFO"
+    USER_PROFILE: "USER_PROFILE",
+    EVENT_INFO: "EVENT_INFO"
 };
 
 export const style = {

@@ -1,6 +1,6 @@
 import React from "react";
 import {Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import {CREATE_EVENT, EXISTING_USER, PAGE_NOT_AVAILABLE, SIGN_IN, SIGN_UP} from "../constants/routes";
+import {SIGN_IN, SIGN_UP} from "../constants/routes";
 
 // Wire it up together, check types and export
 const BasicHeader = () => (
@@ -19,12 +19,12 @@ const BasicHeader = () => (
 
                 </Nav>
                 <Form inline>
-                    <div style={{padding:'5px'}}>
+                    <div style={{padding: '5px'}}>
                         <a href={SIGN_IN} className="btn btn-outline-light" role="button">Sign In</a>
                     </div>
                 </Form>
                 <Form inline>
-                    <div style={{padding:'5px'}}>
+                    <div style={{padding: '5px'}}>
                         <a href={SIGN_UP} className="btn btn-outline-light" role="button">Sign Up</a>
                     </div>
                 </Form>

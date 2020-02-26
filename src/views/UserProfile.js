@@ -1,9 +1,7 @@
 import React, {Component} from "react";
 import {Button, Col, Form} from "react-bootstrap";
-import Database from "../database/firebasedb/Database";
 import {DATABASE_TABLES} from "../constants/OtherConstants";
 import {extractKeyValueFromArray, generateFirebaseWritableObject} from "../Utils";
-import {MessageContent, MessageHeader} from "semantic-ui-react";
 
 const CREATE_ADD_USER_FORM_MEMBERS_NAME = {
     NAME: 'name',
@@ -114,7 +112,6 @@ class UserProfile extends Component {
     handleSubmit(e) {
         e.preventDefault();
         let dataToWrite = generateFirebaseWritableObject(this.state, extractKeyValueFromArray(columnsToShow, 'fieldName'));
-        Database.setToDatabase(DATABASE_TABLES.USER_PROFILE, this.state.contact, dataToWrite);
         //this.updateCreatedEvents();
         this.setInitialState();
         this.state.formSuccess = true;
@@ -125,8 +122,7 @@ class UserProfile extends Component {
     }
 
     updateCreatedEvents() {
-        let arrayTableData, databaseTableData,
-            ref = Database.getInstance().ref().child(DATABASE_TABLES.USER_PROFILE);
+        let arrayTableData, databaseTableData, ref;
         if (ref) {
             ref.on('value', (data) => {
                 arrayTableData = [];
@@ -224,7 +220,7 @@ class UserProfile extends Component {
 
                     <div>
                         {
-                            this.state.formSuccess ? <SuccessfulMessage/>: <p/>
+                            this.state.formSuccess ? <SuccessfulMessage/> : <p/>
                         }
                     </div>
 
@@ -243,7 +239,7 @@ const SuccessfulMessage = (props) => ({
                     Your user registration was successful.
                 </div>
                 <p>You may now log-in with the username and password you have chosen</p>
-            </div>        );
+            </div>);
     }
 });
 
@@ -260,7 +256,6 @@ const ErrorMessage = (props) => ({
         );
     }
 });
-
 
 
 export default UserProfile;
