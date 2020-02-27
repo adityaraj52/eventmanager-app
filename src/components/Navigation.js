@@ -7,17 +7,10 @@ import UserProfile from "../views/UserProfile";
 import PageNotAvailable from "../views/PageNotAvailable";
 import SignUp from "../views/SignUp";
 import SignIn from "../views/SignIn";
-import {
-    CREATE_EVENT,
-    EXISTING_USER,
-    HOME,
-    PAGE_NOT_AVAILABLE,
-    SIGN_IN,
-    SIGN_UP,
-    USER_PROFILE
-} from '../constants/routes';
+import * as ROUTES from '../constants/routes';
 import BasicHeaderAuthorised from "./BasicHeaderAuthorised";
 import {connect} from 'react-redux';
+import UpComingEvents from "../views/UpComingEvents";
 
 
 class Navigation extends Component {
@@ -40,13 +33,14 @@ const NavigationAuth = () => (
         <BasicHeaderAuthorised/>
         <BrowserRouter>
             <Switch>
-                <Route exact path={HOME} component={Home}/>
-                <Route exact path={CREATE_EVENT} component={CreateEvent}/>
-                <Route exact path={USER_PROFILE} component={UserProfile}/>
-                <Route exact path={EXISTING_USER} component={UserProfile}/>
-                <Route exact path={PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
-                <Route exact path={SIGN_UP} component={SignUp}/>
-                <Route exact path={SIGN_IN} component={SignIn}/>
+                <Route exact path={ROUTES.HOME} component={Home}/>
+                <Route exact path={ROUTES.CREATE_EVENT} component={CreateEvent}/>
+                <Route exact path={ROUTES.UPCOMING_EVENT} component={UpComingEvents}/>
+                <Route exact path={ROUTES.USER_PROFILE} component={UserProfile}/>
+                <Route exact path={ROUTES.EXISTING_USER} component={UserProfile}/>
+                <Route exact path={ROUTES.PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
+                <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
+                <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
             </Switch>
         </BrowserRouter>
     </div>
@@ -57,10 +51,10 @@ const NavigationNonAuth = () => (
         <BasicHeader/>
         <BrowserRouter>
             <Switch>
-                <Route exact path={HOME} component={Home}/>
-                <Route exact path={PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
-                <Route exact path={SIGN_UP} component={SignUp}/>
-                <Route exact path={SIGN_IN} component={SignIn}/>
+                <Route exact path={ROUTES.HOME} component={Home}/>
+                <Route exact path={ROUTES.PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
+                <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
+                <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
                 <Route exact path={"*"} component={SignIn}/>
             </Switch>
         </BrowserRouter>

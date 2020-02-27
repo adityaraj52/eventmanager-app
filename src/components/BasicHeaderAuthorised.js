@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import {CREATE_EVENT, PAGE_NOT_AVAILABLE} from "../constants/routes";
+import {CREATE_EVENT, PAGE_NOT_AVAILABLE, UPCOMING_EVENT} from "../constants/routes";
 import {withFirebase} from '../components/Firebase/index';
 
 // Wire it up together, check types and export
@@ -20,7 +20,7 @@ const BasicHeaderAuthorised = (props) => (
                     </NavDropdown>
                     <NavDropdown title="Events" id="collasible-nav-dropdown">
                         <NavDropdown.Item href={CREATE_EVENT}>Create Event</NavDropdown.Item>
-                        <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Upcoming Event</NavDropdown.Item>
+                        <NavDropdown.Item href={UPCOMING_EVENT}>Upcoming Event</NavDropdown.Item>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Recent Events</NavDropdown.Item>
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Delete Event</NavDropdown.Item>
@@ -34,7 +34,7 @@ const BasicHeaderAuthorised = (props) => (
                             color: 'white',
                             padding: '40px',
                             fontSize: '20px'
-                        }}>Welcome {props.firebase.auth.currentUser.email} </span>
+                        }}>Welcome {props.firebase.doGetUserEmail()} </span>
                         <Button onClick={props.firebase.doSignOut} className="btn btn-outline-light" role="button">Sign
                             Out</Button>
                     </div>
