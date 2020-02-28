@@ -72,14 +72,16 @@ export const extractKeyValueFromArray = (array, key) => {
     return values;
 };
 
-export const setUpBootstrapTable = (columnsToShow, isSortable, classNameForCells) => {
+export const setUpBootstrapTable = (columnsToShow, isSortable, classNameForCells, cellFormatter) => {
+    console.log('cellf ormatter is ', cellFormatter)
     let tableColumnData = [];
     columnsToShow.forEach(column => {
         tableColumnData.push({
             dataField: column.fieldName,
             text: column.aliasName,
             sort: !!isSortable,
-            classes: classNameForCells
+            classes: classNameForCells,
+            formatter: cellFormatter
         })
     });
     return tableColumnData;

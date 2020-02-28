@@ -68,13 +68,16 @@ class CreateEvent extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        this.state.eventId = Math.floor(Date.now() + Math.random());
-        this.state.eventParticipant.push(this.state.eventOrganiser);
-        const dataToWrite = this.state;
+        let userId = this.props.firebase.doGetUserId();
+        this.state.eventId = userId + Math.floor(Date.now() + Math.random());
+        this.state.eventParticipant.push({
+            name: this.state.eventOrganiser,
+            uid: userId
+        });
         this.resetState();
-        this.props.firebase.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, this.state.eventId, dataToWrite)
+        this.props.firebase.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, this.state)
             .then(() => {
-                if(dataToWrite.eventModePrivate === "No"){
+                if(this.state.eventModePrivate === "No"){
                     this.props.history.push(UPCOMING_EVENT)
                 }
             })

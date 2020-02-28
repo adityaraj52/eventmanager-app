@@ -20,6 +20,7 @@ class Firebase {
         this.auth = app.auth();
         this.authenticationCallBack = (callback) => app.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(app.auth().callback);
         this.database = firebase.database();
+        this.firestore = app.firestore()
     }
 
     doCreateUserWithEmailAndPassword = (email, password) =>
@@ -71,8 +72,34 @@ class Firebase {
 
     doGetUserPhoneNumber = () => this.auth.currentUser.phoneNumber;
 
-    doSetInDataBase = (databaseName, key, value) => app.database().ref().child(databaseName+'/'+key).push(value);
+    doSetInDataBase = (databaseName, value) => app.database().ref(databaseName+'/'+value.eventId).set(value);
 
+    doSetUserProfileInfo = (userProfile) => {
+        app.database().ref(DATABASE_TABLES.USER_PROFILE+'/'+userProfile.userId).set({...userProfile});
+    }
+
+    doGetUserId = () => this.auth.getUid();
+
+    doDatabaseTableCallBack = (tableName, callBack) => {
+        app.database().ref().child(tableName).on('value', callBack);
+    };
+
+    doUpdateEventParticipants = (eventId, callBack) => {
+        let usersInEvent = [];
+        this.doDatabaseTableCallBack((DATABASE_TABLES.EVENT_INFO+'/'+eventId), data => {
+            return data.val().eventParticipant;
+        }).then(res => {
+            this.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, res.push(this.doGetUserId()))
+        });
+    }
+
+    doAddUserToEvent = (eventId) => {
+        this.doDatabaseTableCallBack((DATABASE_TABLES.EVENT_INFO+'/'+eventId), data => {
+            return data.val().eventParticipant;
+        }).then(res => {
+            this.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, res.push(this.doGetUserId()))
+        });
+    };
 }
 
 export default Firebase;

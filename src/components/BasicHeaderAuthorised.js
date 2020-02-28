@@ -1,6 +1,13 @@
 import React from "react";
 import {Button, Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import {CREATE_EVENT, PAGE_NOT_AVAILABLE, UPCOMING_EVENT} from "../constants/routes";
+import {
+    CREATE_EVENT,
+    PAGE_NOT_AVAILABLE,
+    SHOW_EVENT,
+    TRANSACTIONS,
+    UPCOMING_EVENT,
+    USER_PROFILE
+} from "../constants/routes";
 import {withFirebase} from '../components/Firebase/index';
 
 // Wire it up together, check types and export
@@ -14,7 +21,7 @@ const BasicHeaderAuthorised = (props) => (
                 <Nav className="mr-auto">
                     <Nav.Link href="/">Home</Nav.Link>
                     <NavDropdown title="Membership" id="collasible-nav-dropdown">
-                        <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Your Account</NavDropdown.Item>
+                        <NavDropdown.Item href={USER_PROFILE}>Your Account</NavDropdown.Item>
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href="/DeleteProfile">Delete Profile</NavDropdown.Item>
                     </NavDropdown>
@@ -22,8 +29,14 @@ const BasicHeaderAuthorised = (props) => (
                         <NavDropdown.Item href={CREATE_EVENT}>Create Event</NavDropdown.Item>
                         <NavDropdown.Item href={UPCOMING_EVENT}>Upcoming Event</NavDropdown.Item>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Recent Events</NavDropdown.Item>
+                        <NavDropdown.Item href={SHOW_EVENT}>Show Event</NavDropdown.Item>
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Delete Event</NavDropdown.Item>
+                    </NavDropdown>
+                    <NavDropdown title="Wallet" id="collasible-nav-dropdown">
+                        <NavDropdown.Item href={TRANSACTIONS}>Transactions</NavDropdown.Item>
+                        <NavDropdown.Divider/>
+                        <NavDropdown.Item href={CREATE_EVENT}>Wallet Balance</NavDropdown.Item>
                     </NavDropdown>
 
                 </Nav>

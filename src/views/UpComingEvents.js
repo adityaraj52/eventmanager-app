@@ -4,30 +4,49 @@ import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
 import {withFirebase} from '../components/Firebase';
 
+const cellFormatter = (cell, row) => {
+    console.log('cell format', cell, row)
+    return (<div><a href={cell+"/"+row.eventId}>{cell}</a></div>);
+}
 const columnsToShow = [
     {
-        fieldName: "eventId",
-        aliasName: 'EVENT_ID'
+        dataField: "eventId",
+        text: 'EVENT_ID',
+        sort: true,
+        classes: ['bootstrapEditableTable'],
+        formatter: cellFormatter
     },
     {
-        fieldName: "eventStartTime",
-        aliasName: 'StartTime'
+        dataField: "eventStartTime",
+        text: 'StartTime',
+        sort: true,
+        classes: ['bootstrapEditableTable']
+
     },
     {
-        fieldName: "eventEndTime",
-        aliasName: 'EndTime'
+        dataField: "eventEndTime",
+        text: 'EndTime',
+        sort: true,
+        classes: ['bootstrapEditableTable']
+
     },
     {
-        fieldName: "eventDate",
-        aliasName: 'Date'
+        dataField: "eventDate",
+        text: 'Date',
+        sort: true,
+        classes: ['bootstrapEditableTable']
+
     },
     {
-        fieldName: "eventCost",
-        aliasName: 'EventCost'
+        dataField: "eventCost",
+        text: 'EventCost',
+        sort: true,
+        classes: ['bootstrapEditableTable']
+
     },
     {
-        fieldName: "eventParticipants",
-        aliasName: 'Participants'
+        dataField: "eventParticipants",
+        text: 'Participants'
     }
 ];
 
@@ -48,23 +67,20 @@ class UpComingEvents extends Component {
 
     updateCreatedEvents() {
         let arrayTableData, databaseTableData;
-        console.log('firebase database is', this.props)
-        let ref = this.props.firebase.database.ref().child(DATABASE_TABLES.EVENT_INFO);
+        let ref = this.props.firebase.database.ref(DATABASE_TABLES.EVENT_INFO);
         if (ref) {
             ref.on('value', (data) => {
                 arrayTableData = [];
                 databaseTableData = data.val();
                 if (databaseTableData) {
-                    Object.keys(databaseTableData).forEach(entry => {
-                        Object.keys(databaseTableData[entry]).forEach(entryItem => {
-                            let tableRow = {}, entryItemDetail = databaseTableData[entry][entryItem];
-                            if(entryItemDetail["eventModePrivate"] === "No" && entryItemDetail["eventDate"]){
-                                extractKeyValueFromArray(columnsToShow, 'fieldName').forEach(columnName => {
-                                    tableRow[columnName] = entryItemDetail[columnName];
+                    Object.values(databaseTableData).forEach((value) => {
+                            let tableRow = {};
+                            if(value["eventModePrivate"] === "No" && value["eventDate"]){
+                                extractKeyValueFromArray(columnsToShow, 'dataField').forEach(columnName => {
+                                    tableRow[columnName] = value[columnName];
                                 });
                                 arrayTableData.push(tableRow);
                             }
-                        })
                     });
                     this.setState({
                         tableData: arrayTableData
@@ -84,8 +100,8 @@ class UpComingEvents extends Component {
                     <div className="">
                         <table className="table-responsive table-light">
                             <BootstrapTable keyField='createdAt'
-                                            columns={setUpBootstrapTable(columnsToShow, true, 'bootstrapEditableTable')}
-                                            data={this.state.tableData}/>
+                                            columns={columnsToShow}
+                                    data={this.state.tableData}/>
                         </table>
                     </div>
                 </div>

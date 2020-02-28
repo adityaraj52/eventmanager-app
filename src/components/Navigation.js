@@ -11,6 +11,7 @@ import * as ROUTES from '../constants/routes';
 import BasicHeaderAuthorised from "./BasicHeaderAuthorised";
 import {connect} from 'react-redux';
 import UpComingEvents from "../views/UpComingEvents";
+import ShowEvent from "../views/ShowEvent";
 
 
 class Navigation extends Component {
@@ -41,6 +42,7 @@ const NavigationAuth = () => (
                 <Route exact path={ROUTES.PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
                 <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
+                <Route exact path={ROUTES.SHOW_EVENT} component={ShowEvent}/>
             </Switch>
         </BrowserRouter>
     </div>
