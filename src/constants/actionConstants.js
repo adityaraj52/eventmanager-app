@@ -1,1 +1,2 @@
 export const AUTHORISE_USER = "AUTHORISE_USER";
+export const GET_EVENT_DETAILS = "GET_EVENT_DETAILS";

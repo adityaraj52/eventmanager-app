@@ -3,18 +3,29 @@ import {extractKeyValueFromArray, setUpBootstrapTable} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
 import {withFirebase} from '../components/Firebase';
+import ShowEventDetails from "../components/ShowEventDetails";
+import {HOME, SHOW_EVENT_DETAILS} from "../constants/routes";
+import {connect} from "react-redux";
+import {doUserAuthorisation, getEventDetails} from "../actions";
 
 const cellFormatter = (cell, row) => {
-    console.log('cell format', cell, row)
-    return (<div><a href={cell+"/"+row.eventId}>{cell}</a></div>);
-}
+    return (<div><a href={'#'}>{cell}</a></div>);
+};
+
+let showUserInfo = [];
+
+const onClickCells = (e, column, columnIndex, row, rowIndex) =>{
+    UpComingEvents.changeState(row.eventId);
+    showUserInfo.push(<ShowEventDetails eventId={row.eventId}/>)
+};
 const columnsToShow = [
     {
         dataField: "eventId",
         text: 'EVENT_ID',
         sort: true,
         classes: ['bootstrapEditableTable'],
-        formatter: cellFormatter
+        formatter: cellFormatter,
+        events: {onClick: onClickCells}
     },
     {
         dataField: "eventStartTime",
@@ -48,17 +59,28 @@ const columnsToShow = [
         dataField: "eventParticipants",
         text: 'Participants'
     }
-];
+]
+
 
 const INITIAL_STATE = {
-    tableData: []
-}
+    tableData: [],
+    showEventDetails: []
+};
 
 // Form component
 class UpComingEvents extends Component {
     constructor(props) {
         super(props);
         this.state={...INITIAL_STATE};
+        UpComingEvents.changeState = UpComingEvents.changeState.bind(this)
+    }
+
+    static changeState(eventId){
+        this.props.history.push({
+            pathname: SHOW_EVENT_DETAILS,
+            state: { eventId: eventId },
+            search: eventId
+        })
     }
 
     componentDidMount() {
@@ -94,21 +116,24 @@ class UpComingEvents extends Component {
     render() {
         return (
             <div style={{padding: '5px'}}>
+                {
                 <div className="col-md-8 offset-md-2">
+
+
                     <h2 style={{textAlign: 'center'}}>Upcoming Events</h2>
                     <hr style={style.hrStyle}/>
                     <div className="">
                         <table className="table-responsive table-light">
                             <BootstrapTable keyField='createdAt'
                                             columns={columnsToShow}
-                                    data={this.state.tableData}/>
+                                            data={this.state.tableData}/>
                         </table>
                     </div>
                 </div>
+                }
             </div>
         );
     }
 }
-
 
 export default withFirebase(UpComingEvents);

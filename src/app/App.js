@@ -8,7 +8,6 @@ import {doUserAuthorisation} from '../actions';
 class App extends Component {
     constructor(props) {
         super(props);
-
     }
 
     componentDidMount() {

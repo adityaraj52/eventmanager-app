@@ -78,7 +78,7 @@ class CreateEvent extends Component {
         this.props.firebase.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, this.state)
             .then(() => {
                 if(this.state.eventModePrivate === "No"){
-                    this.props.history.push(UPCOMING_EVENT)
+                    // this.props.history.push(UPCOMING_EVENT)
                 }
             })
             .catch(errorMessage => {
