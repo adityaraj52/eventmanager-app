@@ -9,7 +9,7 @@ import {connect} from "react-redux";
 import {doUserAuthorisation, getEventDetails} from "../actions";
 
 const cellFormatter = (cell, row) => {
-    return (<div><a href={'#'}>{cell}</a></div>);
+    return (<div><a href="javascript:">{cell}</a></div>);
 };
 
 let showUserInfo = [];
@@ -56,11 +56,17 @@ const columnsToShow = [
 
     },
     {
+        dataField: "eventLocation",
+        text: 'Total Price',
+        sort: true,
+        classes: ['bootstrapEditableTable']
+
+    },
+    {
         dataField: "eventParticipants",
         text: 'Participants'
     }
 ]
-
 
 const INITIAL_STATE = {
     tableData: [],
@@ -99,6 +105,10 @@ class UpComingEvents extends Component {
                             let tableRow = {};
                             if(value["eventModePrivate"] === "No" && value["eventDate"]){
                                 extractKeyValueFromArray(columnsToShow, 'dataField').forEach(columnName => {
+                                    console.log(columnName, tableRow[columnName])
+                                    if(columnName === 'eventParticipant'){
+                                        tableRow[columnName] = value[columnName].map(i => i.name).join();
+                                    }
                                     tableRow[columnName] = value[columnName];
                                 });
                                 arrayTableData.push(tableRow);

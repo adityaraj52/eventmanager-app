@@ -6,7 +6,7 @@ import {
     SHOW_EVENT,
     TRANSACTIONS,
     UPCOMING_EVENT,
-    USER_PROFILE
+    USER_PROFILE, HOME
 } from "../constants/routes";
 import {withFirebase} from '../components/Firebase/index';
 

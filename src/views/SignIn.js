@@ -25,7 +25,14 @@ class SignIn extends Component {
             .then(() => {
                 this.setState({...INITIAL_STATE});
                 // window.location.href = ROUTES.HOME;
-                this.props.history.push(ROUTES.HOME);
+                let requestedLocation = this.props.location.pathname+this.props.location.search;
+                console.log("requested location ",requestedLocation)
+                if(requestedLocation.length > 0 && !requestedLocation.toLowerCase().match('signin')){
+                    this.props.history.push(requestedLocation);
+                }
+                else {
+                    this.props.history.push(ROUTES.HOME);
+                }
             })
             .catch(error => {
                 this.setState({error});
