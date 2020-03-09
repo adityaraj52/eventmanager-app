@@ -4,9 +4,8 @@ import {
     CREATE_EVENT,
     PAGE_NOT_AVAILABLE,
     SHOW_EVENT,
-    TRANSACTIONS,
     UPCOMING_EVENT,
-    USER_PROFILE, HOME
+    USER_PROFILE, HOME, USER_TRANSACTIONS, CREATE_POLL
 } from "../constants/routes";
 import {withFirebase} from '../components/Firebase/index';
 
@@ -26,6 +25,7 @@ const BasicHeaderAuthorised = (props) => (
                         <NavDropdown.Item href="/DeleteProfile">Delete Profile</NavDropdown.Item>
                     </NavDropdown>
                     <NavDropdown title="Events" id="collasible-nav-dropdown">
+                        <NavDropdown.Item href={CREATE_POLL}>Create Poll</NavDropdown.Item>
                         <NavDropdown.Item href={CREATE_EVENT}>Create Event</NavDropdown.Item>
                         <NavDropdown.Item href={UPCOMING_EVENT}>Upcoming Event</NavDropdown.Item>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Recent Events</NavDropdown.Item>
@@ -34,7 +34,7 @@ const BasicHeaderAuthorised = (props) => (
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Delete Event</NavDropdown.Item>
                     </NavDropdown>
                     <NavDropdown title="Wallet" id="collasible-nav-dropdown">
-                        <NavDropdown.Item href={TRANSACTIONS}>Transactions</NavDropdown.Item>
+                        <NavDropdown.Item href={USER_TRANSACTIONS}>Transactions</NavDropdown.Item>
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href={CREATE_EVENT}>Wallet Balance</NavDropdown.Item>
                     </NavDropdown>

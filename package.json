@@ -45,6 +45,7 @@
     "react-bootstrap-table2-overlay": "^2.0.0",
     "react-bootstrap-table2-toolkit": "^2.1.2",
     "react-svg": "^11.0.11",
-    "semantic-ui-react": "0.88.2"
+    "semantic-ui-react": "0.88.2",
+    "write-file-p": "^1.0.7"
   }
 }

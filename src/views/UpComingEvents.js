@@ -15,6 +15,7 @@ const cellFormatter = (cell, row) => {
 let showUserInfo = [];
 
 const onClickCells = (e, column, columnIndex, row, rowIndex) =>{
+    console.log(row)
     UpComingEvents.changeState(row.eventId);
     showUserInfo.push(<ShowEventDetails eventId={row.eventId}/>)
 };

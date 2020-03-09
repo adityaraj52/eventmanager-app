@@ -100,6 +100,8 @@ class Firebase {
             this.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, res.push(this.doGetUserId()))
         });
     };
+
+
 }
 
 export default Firebase;

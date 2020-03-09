@@ -118,7 +118,7 @@ class CreateEvent extends Component {
                         <Form.Row>
                             <Form.Group as={Col}>
                                 <label htmlFor="party">Event Date &nbsp;
-                                    <input type="date" name="date" min={"2020-02-01"} max="2022-04-30" style={{
+                                    <input type="date" name="eventDate" min={"2020-02-01"} max="2022-04-30" style={{
                                         width: '100%', padding: '6px 12px', border: '1px solid #ced4da',
                                         borderRadius: '.25rem', marginRight: '0'
                                     }} onChange={this.handleChange} value={this.state.eventDate} required={true}/>

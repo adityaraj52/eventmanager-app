@@ -1,6 +1,6 @@
 import React from "react";
 import {Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import {SIGN_IN, SIGN_UP} from "../constants/routes";
+import {CREATE_POLL, SIGN_IN, SIGN_UP} from "../constants/routes";
 
 // Wire it up together, check types and export
 const BasicHeader = () => (
@@ -12,7 +12,10 @@ const BasicHeader = () => (
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
                     <Nav.Link href="/">Home</Nav.Link>
-                    <NavDropdown title="Membership" id="collasible-nav-dropdown">
+                    <NavDropdown title="Events" id="collasible-nav-dropdown">
+                        <NavDropdown.Item href={CREATE_POLL}>Create Poll</NavDropdown.Item>
+                    </NavDropdown>
+                        <NavDropdown title="Membership" id="collasible-nav-dropdown">
                         <NavDropdown.Item href={SIGN_UP}>Join Us</NavDropdown.Item>
                         <NavDropdown.Item href={SIGN_IN}>Your Account</NavDropdown.Item>
                     </NavDropdown>

@@ -13,6 +13,8 @@ import {connect} from 'react-redux';
 import UpComingEvents from "../views/UpComingEvents";
 import ShowEvent from "../views/ShowEvent";
 import ShowEventDetails from "./ShowEventDetails";
+import UserTransactions from "../views/UserTransactions";
+import CreatePoll from "../views/CreatePoll";
 
 
 class Navigation extends Component {
@@ -45,6 +47,8 @@ const NavigationAuth = () => (
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
                 <Route exact path={ROUTES.SHOW_EVENT} component={ShowEvent}/>
                 <Route exact path={ROUTES.SHOW_EVENT_DETAILS} component={ShowEventDetails}/>
+                <Route exact path={ROUTES.USER_TRANSACTIONS} component={UserTransactions}/>
+                <Route exact path={ROUTES.CREATE_POLL} component={CreatePoll}/>
             </Switch>
         </BrowserRouter>
     </div>
@@ -59,6 +63,7 @@ const NavigationNonAuth = () => (
                 <Route exact path={ROUTES.PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
                 <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
+                <Route exact path={ROUTES.CREATE_POLL} component={CreatePoll}/>
                 <Route exact path={"*"} component={SignIn}/>
             </Switch>
         </BrowserRouter>

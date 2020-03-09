@@ -37,7 +37,7 @@ class ShowEventDetails extends Component {
                             if(key === "eventParticipant"){
                                 value = value.map(i => i.name).join();
                             }
-                            if(value.trim().length>0){
+                            if(value && value.trim().length>0){
                                 tableElements.push(
                                 <tr>
                                     <td className={'bootstrapEditableTable btn-secondary'} style={{textAlign: 'left'}}>{key.substr(5)}</td>
@@ -61,12 +61,15 @@ class ShowEventDetails extends Component {
             uid: this.props.firebase.doGetUserId(),
             name: this.props.firebase.doGetUserDisplayName()
         };
-        if (!this.state.eventCopy.eventParticipant.map(i => i.uid).find(i => i === neweventParticipant.uid)) {
-            this.state.eventCopy.eventParticipant.push(neweventParticipant);
-            this.props.firebase.database.ref(DATABASE_TABLES.EVENT_INFO + '/' + this.state.eventCopy.eventId + '/').update({eventParticipant: this.state.eventCopy.eventParticipant});
-        } else {
-            console.log('you are already going to the event')
-            this.setState({errorEventAttend: "You are already going to the event"})
+        if(this.state.eventCopy.eventParticipant){
+
+            if (!this.state.eventCopy.eventParticipant.map(i => i.uid).find(i => i === neweventParticipant.uid)) {
+                this.state.eventCopy.eventParticipant.push(neweventParticipant);
+                this.props.firebase.database.ref(DATABASE_TABLES.EVENT_INFO + '/' + this.state.eventCopy.eventId + '/').update({eventParticipant: this.state.eventCopy.eventParticipant});
+            } else {
+                console.log('you are already going to the event')
+                this.setState({errorEventAttend: "You are already going to the event"})
+            }
         }
     };
 
@@ -80,13 +83,13 @@ class ShowEventDetails extends Component {
                     <Container style={{padding: "20px"}}>
                         <Row className="justify-content-md-center">
                             <Col xs lg="6" className="justify-content-md-center">
-                                <h2 style={{textAlign: 'center'}}>Event Details</h2>
-                                <hr style={style.hrStyle}/>
+                                {/*<h2 style={{textAlign: 'center'}}>Event Details</h2>*/}
+
 
                                 <div style={{textAlign: 'center'}}>
                                     <Table striped bordered hover variant="light">
                                         <thead style={{textAlign: 'center'}}>
-                                        <td className={'bootstrapEditableTable btn-warning'} style={{backgroundColor: '#c9c9d6', fontSize: '21px'}} colSpan={2}>Event {this.state.eventId}</td>
+                                        <td className={'bootstrapEditableTable btn-warning'} style={{backgroundColor: '#c9c9d6', fontSize: '21px'}} colSpan={2}>Event {this.state.eventCopy.eventId}</td>
                                         </thead>
                                         <tbody>
                                         {this.state.eventDetails}
