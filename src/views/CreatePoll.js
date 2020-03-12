@@ -18,7 +18,9 @@ const cellFormatter = (cell, row) => {
 };
 
 const onClickCells = (e, column, columnIndex, row, rowIndex) =>{
-    CreatePoll.changeState(row.eventId);
+    let eventKey = (row.eventOrganiser + '-' + row.eventStartTime + '-' + row.eventEndTime + '-' + row.eventDate)
+    CreatePoll.changeState(eventKey);
+    console.log(eventKey)
     // showUserInfo.push(<ShowEventDetails eventId={row.eventId}/>)
 };
 

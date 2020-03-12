@@ -1,24 +1,19 @@
 import React, {Component} from "react";
-import {extractKeyValueFromArray, setUpBootstrapTable} from "../Utils";
+import {extractKeyValueFromArray} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
 import {withFirebase} from '../components/Firebase';
-import ShowEventDetails from "../components/ShowEventDetails";
-import {HOME, SHOW_EVENT_DETAILS} from "../constants/routes";
-import {connect} from "react-redux";
-import {doUserAuthorisation, getEventDetails} from "../actions";
+import ShowEvent from "./ShowEvent";
+import {SHOW_EVENT} from "../constants/routes";
 
 const cellFormatter = (cell, row) => {
     return (<div><a href="javascript:">{cell}</a></div>);
 };
 
-let showUserInfo = [];
-
-const onClickCells = (e, column, columnIndex, row, rowIndex) =>{
-    console.log(row)
+const onClickCells = (e, column, columnIndex, row) =>{
     UpComingEvents.changeState(row.eventId);
-    showUserInfo.push(<ShowEventDetails eventId={row.eventId}/>)
 };
+
 const columnsToShow = [
     {
         dataField: "eventId",
@@ -84,7 +79,7 @@ class UpComingEvents extends Component {
 
     static changeState(eventId){
         this.props.history.push({
-            pathname: SHOW_EVENT_DETAILS,
+            pathname: SHOW_EVENT,
             state: { eventId: eventId },
             search: eventId
         })

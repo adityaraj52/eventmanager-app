@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
 import {Button, Col, Container, Form, Row, Table} from "react-bootstrap";
-import {DATABASE_TABLES, style} from "../constants/OtherConstants";
+import {DATABASE_TABLES} from "../constants/OtherConstants";
 
 const INITIAL_STATE = {
     eventId: '',
@@ -21,11 +21,12 @@ class ShowEventDetails extends Component {
     }
 
     componentDidMount() {
-        this.handleSubmit(this.props.location.search.substr(1));
+        if(this.props.location && this.props.location.search){
+            this.handleSubmit(this.props.location.search.substr(1));
+        }
     }
 
     handleSubmit = eventId => {
-        let valueTable = [];
         let ref = this.props.firebase.database.ref(DATABASE_TABLES.EVENT_INFO + '/' + eventId);
         if (ref) {
             ref.on('value', (data) => {
@@ -79,7 +80,7 @@ class ShowEventDetails extends Component {
         return (
             <div>
                 {
-                    // this.state.eventDetails &&
+                    this.state.eventDetails &&
                     <Container style={{padding: "20px"}}>
                         <Row className="justify-content-md-center">
                             <Col xs lg="6" className="justify-content-md-center">

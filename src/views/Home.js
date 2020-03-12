@@ -12,7 +12,8 @@ const style = {
         borderRadius: '5px',
         textAlign: 'center',
         marginTop: '2%',
-        backgroundSize: '100% 100%'
+        backgroundSize: '100% 100%',
+        minWidth: '280px'
     },
     imgStyle: {
         maxWidth: '100%',
@@ -33,7 +34,11 @@ const Home = (props) => (
             </p>
             <div className="justify-content-md-center" style={{textAlign: 'center'}}>
                 <a className="btn" style={style.btnStyle} href='/CreateEvent'>
-                    Get Started
+                    Get Started With Events
+                </a>
+                <br/>
+                <a className="btn" style={style.btnStyle} href='/CreatePoll'>
+                    Get Started With Poll
                 </a>
             </div>
         </div>
@@ -43,6 +48,20 @@ const Home = (props) => (
             <Col>
                 <Row>
                     <Col>
+                        <a href={"/CreatePoll"}><h3><i style={{color: 'green'}} className="fas fa-poll"><span
+                            style={{color: 'black', fontWeight: 500}}>&nbsp;Poll</span></i></h3></a>
+                        <p>Create a poll to know your audience. We help  you to organise an event with an overview of interested participations to have metadata on atendees.  </p>
+
+                    </Col>
+                    <Col>
+                        <h3><i style={{color: 'green'}} className="fa fa-tasks"><span
+                            style={{color: 'black', fontWeight: 500}}>&nbsp;Tasks</span></i></h3>
+                        <p>Not just another todo list. Keep track of more than work. Bespoke for Events, Event Tracker
+                            knows you need to keep track of more than just regular work</p>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
                         <h3><i style={{color: 'green'}} className="fa fa-calendar"><span
                             style={{color: 'black', fontWeight: 500}}>&nbsp;Manage</span></i></h3>
                         <p>Manage your traditional weekly schedules.Written from the ground up for event planners, Event
@@ -50,7 +69,7 @@ const Home = (props) => (
 
                     </Col>
                     <Col>
-                        <h3><i style={{color: 'green'}} className="fa fa-tasks"><span
+                        <h3><i style={{color: 'green'}} className="fa fa-pol"><span
                             style={{color: 'black', fontWeight: 500}}>&nbsp;Tasks</span></i></h3>
                         <p>Not just another todo list. Keep track of more than work. Bespoke for Events, Event Tracker
                             knows you need to keep track of more than just regular work</p>

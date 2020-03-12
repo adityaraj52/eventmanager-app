@@ -46,7 +46,6 @@ const NavigationAuth = () => (
                 <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
                 <Route exact path={ROUTES.SHOW_EVENT} component={ShowEvent}/>
-                <Route exact path={ROUTES.SHOW_EVENT_DETAILS} component={ShowEventDetails}/>
                 <Route exact path={ROUTES.USER_TRANSACTIONS} component={UserTransactions}/>
                 <Route exact path={ROUTES.CREATE_POLL} component={CreatePoll}/>
             </Switch>
