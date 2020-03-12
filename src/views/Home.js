@@ -1,5 +1,6 @@
 import React from 'react'
-import {Col, Container, Row} from 'react-bootstrap';
+import {Col, Container, Nav, NavDropdown, Row} from 'react-bootstrap';
+import {CREATE_EVENT, CREATE_POLL, PAGE_NOT_AVAILABLE, SHOW_EVENT, UPCOMING_EVENT} from "../constants/routes";
 
 const style = {
     btnStyle: {
@@ -13,7 +14,7 @@ const style = {
         textAlign: 'center',
         marginTop: '2%',
         backgroundSize: '100% 100%',
-        minWidth: '280px'
+        minWidth: '280px',
     },
     imgStyle: {
         maxWidth: '100%',
@@ -34,11 +35,11 @@ const Home = (props) => (
             </p>
             <div className="justify-content-md-center" style={{textAlign: 'center'}}>
                 <a className="btn" style={style.btnStyle} href='/CreateEvent'>
-                    Get Started With Events
+                    Create Event
                 </a>
                 <br/>
                 <a className="btn" style={style.btnStyle} href='/CreatePoll'>
-                    Get Started With Poll
+                    Create Poll
                 </a>
             </div>
         </div>

@@ -23,12 +23,12 @@ const BasicHeader = () => (
                 </Nav>
                 <Form inline>
                     <div style={{padding: '5px'}}>
-                        <a href={SIGN_IN} className="btn btn-outline-light" role="button">Sign In</a>
+                        <a href={SIGN_IN} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign In</a>
                     </div>
                 </Form>
                 <Form inline>
                     <div style={{padding: '5px'}}>
-                        <a href={SIGN_UP} className="btn btn-outline-light" role="button">Sign Up</a>
+                        <a href={SIGN_UP} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign Up</a>
                     </div>
                 </Form>
             </Navbar.Collapse>

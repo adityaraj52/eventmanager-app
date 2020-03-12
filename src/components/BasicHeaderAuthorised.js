@@ -48,7 +48,7 @@ const BasicHeaderAuthorised = (props) => (
                             padding: '40px',
                             fontSize: '20px'
                         }}>Welcome {props.firebase.doGetUserEmail()} </span>
-                        <Button onClick={props.firebase.doSignOut} className="btn btn-outline-light" role="button">Sign
+                        <Button onClick={props.firebase.doSignOut} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign
                             Out</Button>
                     </div>
                 </Form>

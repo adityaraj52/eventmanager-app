@@ -66,3 +66,16 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+firebase rules:
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+       "EVENT_POLL": {
+          ".read": "auth == null",
+    ".write": "auth == null"
+    }
+  }
+}

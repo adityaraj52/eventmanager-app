@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "my-project-1497208081606"
-  }
+  },
+    "rules": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+         "EVENT_POLL": {
+            ".read": "auth == null",
+      ".write": "auth == null"
+      }
+    }
 }
