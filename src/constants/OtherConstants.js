@@ -19,17 +19,17 @@ export const USER_PROFILE_FIELDS = {
 };
 
 export const EVENT_INFO_FIELDS = {
-  EVENT_SLOT: "eventSlot",
-  EVENT_ID: "eventId",
-  EVENT_DATE: "eventDate",
-  EVENT_TYPE: "eventType",
-  EVENT_PARTICIPANTS: "eventParticapant",
-  EVENT_LOCATION: "eventLocation",
-  EVENT_ORGANISER: "eventOrganiser",
-  EVENT_COST: "eventCost",
-  EVENT_URL: "eventUrl",
-  EVENT_DETAILS: "eventDetails",
-  EVENT_PRIORITY: "eventPriority"
+    EVENT_SLOT: "eventSlot",
+    EVENT_ID: "eventId",
+    EVENT_DATE: "eventDate",
+    EVENT_TYPE: "eventType",
+    EVENT_PARTICIPANTS: "eventParticapant",
+    EVENT_LOCATION: "eventLocation",
+    EVENT_ORGANISER: "eventOrganiser",
+    EVENT_COST: "eventCost",
+    EVENT_URL: "eventUrl",
+    EVENT_DETAILS: "eventDetails",
+    EVENT_PRIORITY: "eventPriority"
 };
 
 export const style = {

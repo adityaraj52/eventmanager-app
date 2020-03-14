@@ -1,70 +1,44 @@
 import React, {Component} from "react";
 import {getISOFormattedTodayDate} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
+import {Button, Col, Container, Form, Tab, Tabs} from "react-bootstrap";
+import {CREATE_POLL, default as ROUTES, SHOW_EVENT_DETAILS, USER_TRANSACTIONS} from "../constants/routes";
+import CustomisedTable from "../components/CustomisedTable";
 import {withFirebase} from '../components/Firebase';
-import {Button, Col, Form} from "react-bootstrap";
-import BootstrapTable from "react-bootstrap-table-next";
-import {SHOW_EVENT_DETAILS} from "../constants/routes";
 
-//TODO: ADD FEATURE
-// TO ALLOW USERS TO POSTPAY FOR THE EVENT
-// PRICE FOR THE EVENT
-// DROPDOWN FOR ORGANISER NAME
-// Add Methods to fetch specific information
-//from database like get user profileInfo and so on
-
-const cellFormatter = (cell, row) => {
-    return (<div><a href="javascript:">{cell}</a></div>);
-};
-
-const onClickCells = (e, column, columnIndex, row, rowIndex) =>{
+const onClickCells = (e, column, columnIndex, row, rowIndex) => {
     let eventKey = (row.eventOrganiser + '-' + row.eventStartTime + '-' + row.eventEndTime + '-' + row.eventDate)
-    CreatePoll.changeState(eventKey);
-    console.log(eventKey)
-    // showUserInfo.push(<ShowEventDetails eventId={row.eventId}/>)
+    NewPoll.changeState(eventKey);
 };
 
 const columnsToShow = [
     {
         dataField: "eventOrganiser",
         text: 'Organiser',
-        sort: true,
         classes: ['bootstrapEditableTable'],
-        formatter: cellFormatter,
         events: {onClick: onClickCells}
     },
     {
         dataField: "eventStartTime",
         text: 'StartTime',
-        sort: true,
         classes: ['bootstrapEditableTable']
 
     },
     {
         dataField: "eventEndTime",
         text: 'EndTime',
-        sort: true,
         classes: ['bootstrapEditableTable']
 
     },
     {
         dataField: "eventDate",
         text: 'Date',
-        sort: true,
         classes: ['bootstrapEditableTable']
 
     },
-    // {
-    //     dataField: "eventParticipant",
-    //     text: 'Participant',
-    //     sort: true,
-    //     classes: ['bootstrapEditableTable']
-    //
-    // },
     {
         dataField: "eventLocation",
         text: 'Location',
-        sort: true,
         classes: ['bootstrapEditableTable']
 
     }
@@ -81,47 +55,22 @@ const INITIAL_STATE = {
     error: null
 };
 
-const RESET_STATE = {
-    eventOrganiser: "",
-    eventStartTime: "11:00",
-    eventEndTime: "13:30",
-    eventDate: getISOFormattedTodayDate(),
-    eventLocation: "WaldSchulAllee 71, Berlin"
-}
-
-
-// Form component
-class CreatePoll extends Component {
+class ExistingPoll extends Component {
     constructor(props) {
         super(props);
         this.state = {...INITIAL_STATE};
         this.existingEvents = null;
-        this.handleChange = this.handleChange.bind(this)
-        this.handleSubmit = this.handleSubmit.bind(this)
-        CreatePoll.changeState = CreatePoll.changeState.bind(this);
-    }
-
-    static changeState(eventId){
-        this.props.history.push({
-            pathname: SHOW_EVENT_DETAILS,
-            state: { eventId: eventId },
-            search: eventId
-        })
-    }
-
-    handleChange(e) {
-        this.setState({[e.target.name]: e.target.value});
     }
 
     componentDidMount() {
-        let ref = this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL+'/');
-        if(ref){
+        let ref = this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/');
+        if (ref) {
             ref.on('value', data => {
-                if(data && data.val()){
+                if (data && data.val()) {
                     let existingEvents = [];
-                    Object.keys(data.val()).forEach((key, val)=>{
+                    Object.keys(data.val()).forEach((key, val) => {
                         existingEvents.push(data.val()[key]);
-                    })
+                    });
                     this.setState({
                         existingEvents: existingEvents
                     });
@@ -130,18 +79,78 @@ class CreatePoll extends Component {
         }
     }
 
+    render() {
+        return (
+            <div>
+                {this.state.existingEvents &&
+                <div>
+                    <h2 style={{textAlign: 'center'}}>Existing Polls</h2>
+                    <hr style={style.hrStyle}/>
+                    <CustomisedTable
+                        columnStructure={columnsToShow}
+                        keyField={'eventOrganiser + eventStartTime + eventEndTime + eventDate'}
+                        data={this.state.existingEvents}/>
+                </div>
+                }
+            </div>
+        );
+    }
+}
+
+const INITIAL_STATE_NEW_POLL = {
+    eventOrganiser: "",
+    eventStartTime: "11:00",
+    eventEndTime: "13:30",
+    eventDate: getISOFormattedTodayDate(),
+    eventParticipant: [],
+    eventLocation: "WaldSchulAllee 71, Berlin",
+    existingEvents: null,
+    error: null
+};
+
+class NewPoll extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {...INITIAL_STATE_NEW_POLL};
+        this.existingEvents = null;
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        NewPoll.changeState = NewPoll.changeState.bind(this);
+    }
+
     handleSubmit(e) {
         e.preventDefault();
         let dataToWrite = this.state;
         delete dataToWrite.existingEvents;
-        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL+'/'+(this.state.eventOrganiser + '-' + this.state.eventStartTime + '-' + this.state.eventEndTime + '-' + this.state.eventDate)).set(dataToWrite);
+        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/' + (this.state.eventOrganiser + '-' + this.state.eventStartTime + '-' + this.state.eventEndTime + '-' + this.state.eventDate))
+            .set(dataToWrite)
+            .then(() => {
+                this.setState({
+                    error: 'Poll created Successfully '
+                })
+            })
+            .catch(error => {
+                this.setState({error});
+            });
         this.setState({eventOrganiser: ""});
+    }
+
+    static changeState(eventId) {
+        this.props.history.push({
+            pathname: SHOW_EVENT_DETAILS,
+            state: {eventId: eventId},
+            search: eventId
+        });
+    }
+
+    handleChange(e) {
+        this.setState({[e.target.name]: e.target.value});
     }
 
     render() {
         return (
-            <div style={{padding: '5px'}}>
-                <div className="col-md-8 offset-md-2">
+            <div>
+                {/*<div className="col-md-8 offset-md-2">*/}
                     <h2 style={{textAlign: 'center'}}>Create a New Poll</h2>
                     <hr style={style.hrStyle}/>
                     <Form onSubmit={this.handleSubmit}>
@@ -152,7 +161,7 @@ class CreatePoll extends Component {
                                 <Form.Control name="eventOrganiser"
                                               value={this.state.eventOrganiser}
                                               onChange={this.handleChange}
-                                            placeholder={"First Name, Last Name"}>
+                                              placeholder={"First Name, Last Name"}>
                                 </Form.Control>
                             </Form.Group>
 
@@ -173,22 +182,26 @@ class CreatePoll extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label>Start Time</Form.Label>
                                 <Form.Control name="eventStartTime"
-                                              value={this.state.eventStartTime} type="time" placeholder={"12:00-14:00"} onChange={this.handleChange} required={true}>
+                                              value={this.state.eventStartTime} type="time" placeholder={"12:00-14:00"}
+                                              onChange={this.handleChange} required={true}>
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group as={Col}>
                                 <Form.Label>End Time</Form.Label>
                                 <Form.Control name="eventEndTime"
-                                              value={this.state.eventEndTime} type="time" placeholder={"12:00-14:00"} onChange={this.handleChange} required={true}>
+                                              value={this.state.eventEndTime} type="time" placeholder={"12:00-14:00"}
+                                              onChange={this.handleChange} required={true}>
                                 </Form.Control>
                             </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
                             <Form.Group as={Col}>
                                 <Form.Label>Location</Form.Label>
                                 <Form.Control name="eventLocation"
-                                              value={this.state.eventLocation} placeholder={"123 Street, London"} onChange={this.handleChange}>
+                                              value={this.state.eventLocation} placeholder={"123 Street, London"}
+                                              onChange={this.handleChange}>
                                 </Form.Control>
                             </Form.Group>
-
                         </Form.Row>
 
                         <Form.Row style={{textAlign: 'center'}}>
@@ -198,26 +211,25 @@ class CreatePoll extends Component {
                                 </Button>
                             </Form.Group>
                         </Form.Row>
-                        {this.state.errorMessage && <h3 style={{color: 'green'}}>{this.state.errorMessage}</h3>}
+                        {this.state.error && <h3 style={{color: 'green'}}>{this.state.error}</h3>}
                     </Form>
                 </div>
-                {
-                    this.state.existingEvents &&
-
-                <div className="col-md-8 offset-md-2">
-                    <h2 style={{textAlign: 'center'}}>Existing Polls</h2>
-                    <hr style={style.hrStyle}/>
-                    <table className="table-responsive table-light">
-                        <BootstrapTable keyField='createdAt'
-                                        columns={columnsToShow}
-                                        data={this.state.existingEvents}/>
-                    </table>
-                </div>
-                }
-                </div>
-        );
+            // </div>
+        )
     }
 }
 
+const CreatePoll = (props) => (
+    <Container style={{padding: "20px"}}>
+        <Tabs defaultActiveKey="NewPoll" transition={false}>
+            <Tab eventKey="NewPoll" title="Create a New Poll">
+                <NewPoll firebase={props.firebase}/>
+            </Tab>
+            <Tab eventKey="ExisitngPolls" title="Exisitng Polls">
+                <ExistingPoll firebase={props.firebase}/>
+            </Tab>
+        </Tabs>
+    </Container>
+)
 
 export default withFirebase(CreatePoll);

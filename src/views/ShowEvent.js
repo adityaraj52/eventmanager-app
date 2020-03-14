@@ -5,8 +5,6 @@ import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {style} from "../constants/OtherConstants";
 import {Link} from "react-router-dom";
 import ShowEventDetails from "../components/ShowEventDetails";
-import {connect} from "react-redux";
-import {doUserAuthorisation} from "../actions";
 
 const INITIAL_STATE = {
     eventId: '',
@@ -37,7 +35,7 @@ class ShowEvent extends Component {
     };
 
     componentDidMount() {
-        if(this.props.location && this.props.location.state){
+        if (this.props.location && this.props.location.state) {
             this.setState({
                 eventId: this.props.location.search.substr(1),
                 submitTrue: true
@@ -47,8 +45,7 @@ class ShowEvent extends Component {
     }
 
     render() {
-        const {email, password, error} = this.state;
-        const isInvalid = password === '' || email === '';
+        const error = this.state;
         return (
             <div>
                 <Container style={{padding: "20px"}}>
@@ -84,7 +81,7 @@ class ShowEvent extends Component {
                                 {
                                     this.state.eventId && this.state.submitTrue &&
                                     <ShowEventDetails
-                                        location={{search: '?'+this.state.eventId}}/>
+                                        location={{search: '?' + this.state.eventId}}/>
                                 }
                             </Form>
                         </Col>

@@ -1,6 +1,5 @@
 import React from 'react'
-import {Col, Container, Nav, NavDropdown, Row} from 'react-bootstrap';
-import {CREATE_EVENT, CREATE_POLL, PAGE_NOT_AVAILABLE, SHOW_EVENT, UPCOMING_EVENT} from "../constants/routes";
+import {Col, Container, Row} from 'react-bootstrap';
 
 const style = {
     btnStyle: {
@@ -51,7 +50,8 @@ const Home = (props) => (
                     <Col>
                         <a href={"/CreatePoll"}><h3><i style={{color: 'green'}} className="fas fa-poll"><span
                             style={{color: 'black', fontWeight: 500}}>&nbsp;Poll</span></i></h3></a>
-                        <p>Create a poll to know your audience. We help  you to organise an event with an overview of interested participations to have metadata on atendees.  </p>
+                        <p>Create a poll to know your audience. We help you to organise an event with an overview of
+                            interested participants with their metadata. </p>
 
                     </Col>
                     <Col>
@@ -70,7 +70,7 @@ const Home = (props) => (
 
                     </Col>
                     <Col>
-                        <h3><i style={{color: 'green'}} className="fa fa-pol"><span
+                        <h3><i style={{color: 'green'}} className="fa fa-tasks"><span
                             style={{color: 'black', fontWeight: 500}}>&nbsp;Tasks</span></i></h3>
                         <p>Not just another todo list. Keep track of more than work. Bespoke for Events, Event Tracker
                             knows you need to keep track of more than just regular work</p>

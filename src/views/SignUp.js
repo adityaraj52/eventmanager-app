@@ -59,12 +59,6 @@ class SignUpFormBase extends Component {
             error,
         } = this.state;
 
-        const isInvalid =
-            passwordOne !== passwordTwo ||
-            passwordOne === '' ||
-            email === '' ||
-            displayName === '' || phoneNumber == '';
-
         return (
             <div>
                 <Container style={{padding: "20px"}}>

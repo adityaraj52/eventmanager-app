@@ -2,10 +2,12 @@ import React from "react";
 import {Button, Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {
     CREATE_EVENT,
+    CREATE_POLL,
     PAGE_NOT_AVAILABLE,
     SHOW_EVENT,
     UPCOMING_EVENT,
-    USER_PROFILE, HOME, USER_TRANSACTIONS, CREATE_POLL
+    USER_PROFILE,
+    USER_TRANSACTIONS
 } from "../constants/routes";
 import {withFirebase} from '../components/Firebase/index';
 
@@ -19,13 +21,13 @@ const BasicHeaderAuthorised = (props) => (
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
                     <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href={CREATE_POLL}>Polls</Nav.Link>
                     <NavDropdown title="Membership" id="collasible-nav-dropdown">
                         <NavDropdown.Item href={USER_PROFILE}>Your Account</NavDropdown.Item>
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href="/DeleteProfile">Delete Profile</NavDropdown.Item>
                     </NavDropdown>
                     <NavDropdown title="Events" id="collasible-nav-dropdown">
-                        <NavDropdown.Item href={CREATE_POLL}>Create Poll</NavDropdown.Item>
                         <NavDropdown.Item href={CREATE_EVENT}>Create Event</NavDropdown.Item>
                         <NavDropdown.Item href={UPCOMING_EVENT}>Upcoming Event</NavDropdown.Item>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Recent Events</NavDropdown.Item>
@@ -48,7 +50,8 @@ const BasicHeaderAuthorised = (props) => (
                             padding: '40px',
                             fontSize: '20px'
                         }}>Welcome {props.firebase.doGetUserEmail()} </span>
-                        <Button onClick={props.firebase.doSignOut} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign
+                        <Button onClick={props.firebase.doSignOut} className="btn btn-outline-light"
+                                style={{minWidth: '90px'}} role="button">Sign
                             Out</Button>
                     </div>
                 </Form>

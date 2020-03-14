@@ -12,10 +12,8 @@ const BasicHeader = () => (
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
                     <Nav.Link href="/">Home</Nav.Link>
-                    <NavDropdown title="Events" id="collasible-nav-dropdown">
-                        <NavDropdown.Item href={CREATE_POLL}>Create Poll</NavDropdown.Item>
-                    </NavDropdown>
-                        <NavDropdown title="Membership" id="collasible-nav-dropdown">
+                    <Nav.Link href={CREATE_POLL}>Polls</Nav.Link>
+                    <NavDropdown title="Membership" id="collasible-nav-dropdown">
                         <NavDropdown.Item href={SIGN_UP}>Join Us</NavDropdown.Item>
                         <NavDropdown.Item href={SIGN_IN}>Your Account</NavDropdown.Item>
                     </NavDropdown>
@@ -23,12 +21,14 @@ const BasicHeader = () => (
                 </Nav>
                 <Form inline>
                     <div style={{padding: '5px'}}>
-                        <a href={SIGN_IN} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign In</a>
+                        <a href={SIGN_IN} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign
+                            In</a>
                     </div>
                 </Form>
                 <Form inline>
                     <div style={{padding: '5px'}}>
-                        <a href={SIGN_UP} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign Up</a>
+                        <a href={SIGN_UP} className="btn btn-outline-light" style={{minWidth: '90px'}} role="button">Sign
+                            Up</a>
                     </div>
                 </Form>
             </Navbar.Collapse>

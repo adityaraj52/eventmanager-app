@@ -6,15 +6,10 @@ import {doUserAuthorisation} from '../actions';
 
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.listener = this.props.firebase.authenticationCallBack(this.props.firebase.auth.onAuthStateChanged(userAuthenticationStatus => {
             this.props.doUserAuthorisation(userAuthenticationStatus)
         }));
-
     }
 
     render() {

@@ -3,22 +3,23 @@ import {extractKeyValueFromArray} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import BootstrapTable from 'react-bootstrap-table-next';
 import {withFirebase} from '../components/Firebase';
-import ShowEvent from "./ShowEvent";
 import {SHOW_EVENT} from "../constants/routes";
+import CustomisedTable from "../components/CustomisedTable";
 
 const cellFormatter = (cell, row) => {
     return (<div><a href="javascript:">{cell}</a></div>);
 };
 
-const onClickCells = (e, column, columnIndex, row) =>{
+const onClickCells = (e, column, columnIndex, row) => {
     UpComingEvents.changeState(row.eventId);
 };
+
+const defaultSorted = [{dataField: "eventDate", order: "asc"}];
 
 const columnsToShow = [
     {
         dataField: "eventId",
         text: 'EVENT_ID',
-        sort: true,
         classes: ['bootstrapEditableTable'],
         formatter: cellFormatter,
         events: {onClick: onClickCells}
@@ -73,14 +74,14 @@ const INITIAL_STATE = {
 class UpComingEvents extends Component {
     constructor(props) {
         super(props);
-        this.state={...INITIAL_STATE};
+        this.state = {...INITIAL_STATE};
         UpComingEvents.changeState = UpComingEvents.changeState.bind(this)
     }
 
-    static changeState(eventId){
+    static changeState(eventId) {
         this.props.history.push({
             pathname: SHOW_EVENT,
-            state: { eventId: eventId },
+            state: {eventId: eventId},
             search: eventId
         })
     }
@@ -98,17 +99,17 @@ class UpComingEvents extends Component {
                 databaseTableData = data.val();
                 if (databaseTableData) {
                     Object.values(databaseTableData).forEach((value) => {
-                            let tableRow = {};
-                            if(value["eventModePrivate"] === "No" && value["eventDate"]){
-                                extractKeyValueFromArray(columnsToShow, 'dataField').forEach(columnName => {
-                                    console.log(columnName, tableRow[columnName])
-                                    if(columnName === 'eventParticipant'){
-                                        tableRow[columnName] = value[columnName].map(i => i.name).join();
-                                    }
-                                    tableRow[columnName] = value[columnName];
-                                });
-                                arrayTableData.push(tableRow);
-                            }
+                        let tableRow = {};
+                        if (value["eventModePrivate"] === "No" && value["eventDate"]) {
+                            extractKeyValueFromArray(columnsToShow, 'dataField').forEach(columnName => {
+                                console.log(columnName, tableRow[columnName])
+                                if (columnName === 'eventParticipant') {
+                                    tableRow[columnName] = value[columnName].map(i => i.name).join();
+                                }
+                                tableRow[columnName] = value[columnName];
+                            });
+                            arrayTableData.push(tableRow);
+                        }
                     });
                     this.setState({
                         tableData: arrayTableData
@@ -123,19 +124,20 @@ class UpComingEvents extends Component {
         return (
             <div style={{padding: '5px'}}>
                 {
-                <div className="col-md-8 offset-md-2">
+                    <div className="col-md-8 offset-md-2">
 
 
-                    <h2 style={{textAlign: 'center'}}>Upcoming Events</h2>
-                    <hr style={style.hrStyle}/>
-                    <div className="">
-                        <table className="table-responsive table-light">
-                            <BootstrapTable keyField='createdAt'
-                                            columns={columnsToShow}
-                                            data={this.state.tableData}/>
-                        </table>
+                        <h2 style={{textAlign: 'center'}}>Upcoming Events</h2>
+                        <hr style={style.hrStyle}/>
+                        <div className="">
+                            <CustomisedTable
+                                columnStructure={columnsToShow}
+                                data={this.state.tableData}
+                                keyField='eventId'
+                                defaultSorted={defaultSorted}
+                            />
+                        </div>
                     </div>
-                </div>
                 }
             </div>
         );

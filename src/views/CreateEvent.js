@@ -1,15 +1,9 @@
 import React, {Component} from "react";
-import {
-    createFormControlSelectOptions,
-    extractKeyValueFromArray,
-    getISOFormattedTodayDate,
-    yesnoSelectOption
-} from "../Utils";
+import {createFormControlSelectOptions, getISOFormattedTodayDate, yesnoSelectOption} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import {withFirebase} from '../components/Firebase';
 import {Button, Col, Form} from "react-bootstrap";
-import {eventSlotList} from "../constants/eventList";
-import {default as ROUTES, UPCOMING_EVENT} from "../constants/routes";
+import {UPCOMING_EVENT} from "../constants/routes";
 
 //TODO: ADD FEATURE
 // TO ALLOW USERS TO POSTPAY FOR THE EVENT
@@ -53,7 +47,7 @@ class CreateEvent extends Component {
         this.resetState()
     }
 
-    resetState(){
+    resetState() {
         this.setState({...INITIAL_STATE});
         this.setState({
             eventOrganiser: this.props.firebase.doGetUserDisplayName(),
@@ -77,7 +71,7 @@ class CreateEvent extends Component {
         this.resetState();
         this.props.firebase.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, this.state)
             .then(() => {
-                if(this.state.eventModePrivate === "No"){
+                if (this.state.eventModePrivate === "No") {
                     this.props.history.push(UPCOMING_EVENT)
                 }
             })
@@ -110,7 +104,7 @@ class CreateEvent extends Component {
                                 <Form.Label>Event Organiser Email</Form.Label>
                                 <Form.Control name="eventOrganiserEmail"
                                               value={this.state.eventOrganiserEmail}
-                                              disabled >
+                                              disabled>
                                 </Form.Control>
                             </Form.Group>
                         </Form.Row>
@@ -130,7 +124,8 @@ class CreateEvent extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label>Event Location</Form.Label>
                                 <Form.Control name="eventLocation"
-                                              value={this.state.eventLocation} placeholder={"123 Street, London"} onChange={this.handleChange} required={true}>
+                                              value={this.state.eventLocation} placeholder={"123 Street, London"}
+                                              onChange={this.handleChange} required={true}>
                                 </Form.Control>
                             </Form.Group>
                         </Form.Row>
@@ -139,13 +134,15 @@ class CreateEvent extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label>Event Start Time</Form.Label>
                                 <Form.Control name="eventStartTime"
-                                              value={this.state.eventStartTime} type="time" placeholder={"12:00-14:00"} onChange={this.handleChange} required={true}>
+                                              value={this.state.eventStartTime} type="time" placeholder={"12:00-14:00"}
+                                              onChange={this.handleChange} required={true}>
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group as={Col}>
                                 <Form.Label>Event End Time</Form.Label>
                                 <Form.Control name="eventEndTime"
-                                              value={this.state.eventEndTime} type="time" placeholder={"12:00-14:00"} onChange={this.handleChange} required={true}>
+                                              value={this.state.eventEndTime} type="time" placeholder={"12:00-14:00"}
+                                              onChange={this.handleChange} required={true}>
                                 </Form.Control>
                             </Form.Group>
 
@@ -155,7 +152,8 @@ class CreateEvent extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label>Event Cost</Form.Label>
                                 <Form.Control name="eventCost" type={"number"}
-                                              value={this.state.eventCost} placeholder={"Event Cost"} onChange={this.handleChange} required={true}>
+                                              value={this.state.eventCost} placeholder={"Event Cost"}
+                                              onChange={this.handleChange} required={true}>
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group as={Col}>
@@ -178,7 +176,8 @@ class CreateEvent extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label>Event Details</Form.Label>
                                 <Form.Control as={"textarea"} rows="3" name="eventDetails" onChange={this.handleChange}
-                                              value={this.state.eventDetails} placeholder={"Provide any other useful information about the event(e.g. payment information)"}>
+                                              value={this.state.eventDetails}
+                                              placeholder={"Provide any other useful information about the event(e.g. payment information)"}>
                                 </Form.Control>
                             </Form.Group>
                         </Form.Row>
@@ -195,7 +194,7 @@ class CreateEvent extends Component {
 
                     </Form>
                 </div>
-                </div>
+            </div>
         );
     }
 }

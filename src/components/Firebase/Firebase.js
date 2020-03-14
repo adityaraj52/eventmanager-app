@@ -72,10 +72,10 @@ class Firebase {
 
     doGetUserPhoneNumber = () => this.auth.currentUser.phoneNumber;
 
-    doSetInDataBase = (databaseName, value) => app.database().ref(databaseName+'/'+value.eventId).set(value);
+    doSetInDataBase = (databaseName, value) => app.database().ref(databaseName + '/' + value.eventId).set(value);
 
     doSetUserProfileInfo = (userProfile) => {
-        app.database().ref(DATABASE_TABLES.USER_PROFILE+'/'+userProfile.userId).set({...userProfile});
+        app.database().ref(DATABASE_TABLES.USER_PROFILE + '/' + userProfile.userId).set({...userProfile});
     }
 
     doGetUserId = () => this.auth.getUid();
@@ -85,8 +85,7 @@ class Firebase {
     };
 
     doUpdateEventParticipants = (eventId, callBack) => {
-        let usersInEvent = [];
-        this.doDatabaseTableCallBack((DATABASE_TABLES.EVENT_INFO+'/'+eventId), data => {
+        this.doDatabaseTableCallBack((DATABASE_TABLES.EVENT_INFO + '/' + eventId), data => {
             return data.val().eventParticipant;
         }).then(res => {
             this.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, res.push(this.doGetUserId()))
@@ -94,7 +93,7 @@ class Firebase {
     }
 
     doAddUserToEvent = (eventId) => {
-        this.doDatabaseTableCallBack((DATABASE_TABLES.EVENT_INFO+'/'+eventId), data => {
+        this.doDatabaseTableCallBack((DATABASE_TABLES.EVENT_INFO + '/' + eventId), data => {
             return data.val().eventParticipant;
         }).then(res => {
             this.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, res.push(this.doGetUserId()))

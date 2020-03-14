@@ -13,7 +13,7 @@ code {
 }
 
 .bootstrapEditableTable {
-    max-width: 100px;
+    max-width: 1px;
     height: 2px;
     overflow-y: auto;
     overflow-x: auto;

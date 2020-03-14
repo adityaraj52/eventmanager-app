@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route, Router, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import BasicHeader from "../components/BasicHeader";
 import Home from "../views/Home";
 import CreateEvent from "../views/CreateEvent";
@@ -12,16 +12,11 @@ import BasicHeaderAuthorised from "./BasicHeaderAuthorised";
 import {connect} from 'react-redux';
 import UpComingEvents from "../views/UpComingEvents";
 import ShowEvent from "../views/ShowEvent";
-import ShowEventDetails from "./ShowEventDetails";
 import UserTransactions from "../views/UserTransactions";
 import CreatePoll from "../views/CreatePoll";
 
 
 class Navigation extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <div>{

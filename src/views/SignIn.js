@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
 import * as ROUTES from '../constants/routes';
-import {Button, Col, Container, Form, Jumbotron, Row} from "react-bootstrap";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {style} from "../constants/OtherConstants";
 import {Link} from "react-router-dom";
 
@@ -25,12 +25,11 @@ class SignIn extends Component {
             .then(() => {
                 this.setState({...INITIAL_STATE});
                 // window.location.href = ROUTES.HOME;
-                let requestedLocation = this.props.location.pathname+this.props.location.search;
-                console.log("requested location ",requestedLocation)
-                if(requestedLocation.length > 0 && !requestedLocation.toLowerCase().match('signin')){
+                let requestedLocation = this.props.location.pathname + this.props.location.search;
+                console.log("requested location ", requestedLocation)
+                if (requestedLocation.length > 0 && !requestedLocation.toLowerCase().match('signin')) {
                     this.props.history.push(requestedLocation);
-                }
-                else {
+                } else {
                     this.props.history.push(ROUTES.HOME);
                 }
             })
@@ -45,12 +44,11 @@ class SignIn extends Component {
 
     render() {
         const {email, password, error} = this.state;
-        const isInvalid = password === '' || email === '';
         return (
             <div>
                 <Container style={{padding: "20px"}}>
                     <Row className="justify-content-md-center">
-                        <Col xs lg="6" className="justify-content-md-center" >
+                        <Col xs lg="6" className="justify-content-md-center">
                             <h2 style={{textAlign: 'center'}}>Sign In</h2>
                             <hr style={style.hrStyle}/>
                             <Form onSubmit={this.handleSubmit} className="justify-content-md-center">

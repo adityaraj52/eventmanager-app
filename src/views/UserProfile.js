@@ -25,7 +25,9 @@ class UserProfile extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        this.state.userId = this.props.firebase.doGetUserId();
+        this.setState({
+            userId: this.props.firebase.doGetUserId()
+        });
         this.props.firebase.doSetUserProfileInfo(this.state);
     }
 
@@ -38,13 +40,13 @@ class UserProfile extends Component {
             displayName: this.props.firebase.doGetUserDisplayName(),
             email: this.props.firebase.doGetUserEmail()
         });
-        let ref = this.props.firebase.database.ref(DATABASE_TABLES.USER_PROFILE+'/'+this.props.firebase.doGetUserId());
-            if(ref){
-                ref.on('value', (data) => {
-                    if(data.val())
-                        this.setState(data.val())
-                })
-            }
+        let ref = this.props.firebase.database.ref(DATABASE_TABLES.USER_PROFILE + '/' + this.props.firebase.doGetUserId());
+        if (ref) {
+            ref.on('value', (data) => {
+                if (data.val())
+                    this.setState(data.val())
+            })
+        }
     }
 
     render() {
@@ -91,7 +93,7 @@ class UserProfile extends Component {
                                     <Form.Group as={Col}>
                                         <Form.Label>Phone Number</Form.Label>
                                         <Form.Control type={'number'}
-                                            onChange={this.handleChange}
+                                                      onChange={this.handleChange}
                                                       value={this.state.phoneNumber}
                                                       name={"phoneNumber"}/>
                                     </Form.Group>
