@@ -14,8 +14,8 @@ import {UPCOMING_EVENT} from "../constants/routes";
 
 
 const INITIAL_STATE = {
-    eventStartTime: "11:00",
-    eventEndTime: "13:30",
+    eventStartTime: "17:00",
+    eventEndTime: "22:30",
     eventId: "",
     eventDate: getISOFormattedTodayDate(),
     eventType: "",

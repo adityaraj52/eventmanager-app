@@ -13,8 +13,23 @@ code {
 }
 
 .bootstrapEditableTable {
-    max-width: 1px;
-    height: 2px;
+    max-width: 2px;
+    min-width: max-content;
+    /*height: 2px;*/
     overflow-y: auto;
     overflow-x: auto;
+}
+
+.forceVerticalAlignMiddle {
+    vertical-align: middle !important;
+    background-color: red;
+}
+
+.alignTextCenter {
+    text-align: center;
+}
+
+.fixWidthToContent {
+    max-inline-size: fit-content;
+    min-width: max-content
 }

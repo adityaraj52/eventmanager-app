@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
-import {DATABASE_TABLES} from "../constants/OtherConstants";
+import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import {Container, Tab, Tabs} from "react-bootstrap";
 import CustomisedTable from "../components/CustomisedTable";
 
@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 
 const columnsToShow = [
     {dataField: "eventId", text: 'Event Id', classes: ['bootstrapEditableTable']},
-    {dataField: "eventDate", text:'Date'},
+    {dataField: "eventDate", text: 'Date'},
     {dataField: "eventCost", text: 'Cost'}
 ];
 
@@ -64,14 +64,16 @@ class Transactions extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{padding: "5px"}}>
                 {this.state &&
-                <table className="table-responsive table-light">
+                <div>
+                    <h3 style={{textAlign: 'center'}}>Upcoming Transactions</h3>
+                    <hr style={style.hrStyle}/>
                     <CustomisedTable
                         columnStructure={columnsToShow}
                         data={this.state.eventTransactions}
                         keyField='eventId'/>
-                </table>
+                </div>
                 }
             </div>
         )
@@ -81,10 +83,14 @@ class Transactions extends Component {
 const UserTransactions = (props) => (
     <Container style={{padding: "20px"}}>
         <Tabs defaultActiveKey="UpcomingTransactions" transition={false}>
-            <Tab eventKey="UpcomingTransactions" title="Upcoming Transactions">
+            <Tab eventKey="UpcomingTransactions" title="Upcoming">
                 <Transactions firebase={props.firebase}/>
             </Tab>
-            <Tab eventKey="RecentTransactions" title="RecentTransactions">
+            <Tab eventKey="PastTransactions" title="Previous">
+                <div style={{padding: "5px"}}>
+                    <h3 style={{textAlign: 'center'}}>Previous Transactions</h3>
+                    <hr style={style.hrStyle}/>
+                </div>
             </Tab>
         </Tabs>
     </Container>

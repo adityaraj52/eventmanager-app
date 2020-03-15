@@ -1,13 +1,35 @@
 import React from 'react';
 import BootstrapTable from "react-bootstrap-table-next";
 import PropTypes from 'prop-types';
+import { Type } from 'react-bootstrap-table2-editor';
+import cellEditFactory from 'react-bootstrap-table2-editor';
+
+const columnHeaderClasses = "tableHeaderHeight fixWidthToContent"
 
 const CustomisedTable = (props) => (
     <div>
         <table className="table-responsive table-light">
-            <BootstrapTable keyField='createdAt'
-                            columns={prepareColumnData(props.columnStructure, props.nonformattedColumnNames, props.nonsortableColumnNames)}
-                            data={props.data}/>
+            {
+                <BootstrapTable keyField='createdAt'
+                                columns={prepareColumnData(props.columnStructure, props.nonformattedColumnNames, props.nonsortableColumnNames, props.editableColumns)}
+                                data={props.data}
+                                cellEdit={!!props.editableColumns && cellEditFactory({
+                                    mode: 'click',
+                                    beforeSaveCell(oldValue, newValue, row, column, done) {
+                                        setTimeout(() => {
+                                            console.log(oldValue, newValue, row, column, done);
+                                            // eslint-disable-next-line no-restricted-globals
+                                            if(confirm("Do you accept changes !")){
+                                                done(); // contine to save the changes
+                                            } else{
+                                                console.log('change rejected')
+                                            }
+                                        }, 0);
+                                        return { async: true };
+                                    }
+                                })}
+                />
+            }
         </table>
     </div>
 
@@ -25,13 +47,17 @@ CustomisedTable.propTypes = {
     data: PropTypes.arrayOf(Object).isRequired,
     nonformattedColumnNames: PropTypes.arrayOf(String),
     nonsortableColumnNames: PropTypes.arrayOf(String),
-    defaultSorted: PropTypes.object
+    defaultSorted: PropTypes.object,
+    editableColumns: PropTypes.arrayOf(String),
+    cellEditCallBack: PropTypes.func
 };
 
-const prepareColumnData = (columnStructure, nonformattedColumnNames, nonsortableColumnNames) => {
+const prepareColumnData = (columnStructure, nonformattedColumnNames, nonsortableColumnNames, editableColumns) => {
     columnStructure.forEach(item => {
-        applyHeaderFormat(item, nonformattedColumnNames);
+        applyCellEditMode(item, editableColumns);
         applySortable(item, nonsortableColumnNames);
+        applyColumnHeaderClasses(item, columnHeaderClasses);
+        applyHeaderFormat(item, nonformattedColumnNames);
     });
     return columnStructure;
 };
@@ -39,8 +65,11 @@ const prepareColumnData = (columnStructure, nonformattedColumnNames, nonsortable
 const formatHeaderText = (text) => {
     if (typeof text === "string") {
         text = <div style={{fontWeight: 'normal', textAlign: 'center'}}>
-            <a href={"javascript:"} >{text}&nbsp;</a>
-            <i className="fas fa-sort" style={{color: '#767d87'}}/>
+            <div className={'fixWidthToContent'}>
+                <a href={"javascript:"} style={{display:'inline-block'}} >{text}&nbsp;
+                    <i className="fas fa-sort" style={{color: '#767d87'}}></i>
+                </a>
+            </div>
         </div>
     }
     return text;
@@ -51,7 +80,26 @@ const applyHeaderFormat = (item, nonformattedColumnNames) => {
         if (!nonformattedColumnNames.includes(item["text"])) {
             item["text"] = formatHeaderText(item["text"])
         }
+    }
+};
 
+const applyCellEditMode = (item, editableColumns) => {
+    if (!!editableColumns) {
+        let colToEdit = editableColumns.filter(i => i.columnName===item["text"]);
+        if(colToEdit.length > 0){
+            if(!!colToEdit.editType){
+                colToEdit["editType"] = Type.TEXT
+            }
+            item["editor"]={
+                type: colToEdit[0].editType
+            }
+            item["editable"] = (cell, row, rowIndex, colIndex) => {
+
+                return true;
+            }
+        } else {
+            item.editable = () => false;
+        }
     }
 };
 
@@ -62,5 +110,9 @@ const applySortable = (item, nonsortableColumnNames) => {
         }
     }
 };
+
+const applyColumnHeaderClasses = (item, classes) => {
+    item["headerClasses"] = classes
+}
 
 export default CustomisedTable;
