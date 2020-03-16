@@ -30,6 +30,29 @@ code {
 }
 
 .fixWidthToContent {
-    max-inline-size: fit-content;
     min-width: max-content
 }
+
+.maxInlineSizefitContent {
+    max-inline-size: fit-content;
+}
+
+.fixed {
+    table-layout:fixed;
+    background-color: #fafafa;
+    vertical-align: middle;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.fixed td {
+    max-width: 120px;
+    min-width: 120px;
+    overflow:scroll;
+    vertical-align: middle;
+    border-color: cadetblue;
+}
+
+

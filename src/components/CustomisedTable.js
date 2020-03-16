@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Type } from 'react-bootstrap-table2-editor';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 
-const columnHeaderClasses = "tableHeaderHeight fixWidthToContent"
+const columnHeaderClasses = "tableHeaderHeight fixWidthToContent alignTextCenter"
 
 const CustomisedTable = (props) => (
     <div>

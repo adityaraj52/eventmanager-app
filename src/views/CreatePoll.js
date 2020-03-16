@@ -1,21 +1,26 @@
 import React, {Component} from "react";
 import {getISOFormattedTodayDate} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
-import {Button, Col, Container, Form, Modal, Row, Tab, Tabs} from "react-bootstrap";
+import {Button, Col, Container, Form, Modal, Row, Tab, Table, Tabs} from "react-bootstrap";
 import {SHOW_EVENT_DETAILS} from "../constants/routes";
 import CustomisedTable from "../components/CustomisedTable";
 import {withFirebase} from '../components/Firebase';
-import {Type} from 'react-bootstrap-table2-editor';
-
-const onClickCells = (e, column, columnIndex, row, rowIndex) => {
-    let eventKey = (row.eventOrganiser + '-' + row.eventStartTime + '-' + row.eventEndTime + '-' + row.eventDate);
-
-};
+import BasicTable from "../components/BasicTable";
 
 const cellFormatter = (cell, row) => {
     return (
             <Button className={'btn btn-primary'} onClick={ExistingPoll.showModal}>Attend</Button>
     );
+};
+
+const participantFormatter = (cell) => {
+    let cellArray = [];
+    cell.split(',').forEach(item => {
+        cellArray.push(
+            <td>{item}</td>
+        )
+    });
+    return (<BasicTable bodyContents={(<tbody><tr>{cellArray}</tr></tbody>)}/>);
 };
 
 const columnsToShow = [
@@ -49,14 +54,14 @@ const columnsToShow = [
     {
         dataField: "addParticipant",
         text: 'Join',
-        classes: ['bootstrapEditableTable alignTextCenter fixWidthToContent'],
-        events: {onClick: onClickCells},
+        classes: ['bootstrapEditableTable alignTextCenter fixWidthToContent maxInlineSizefitContent'],
         formatter: cellFormatter
     },
     {
         dataField: "eventParticipants",
         text: 'Participants',
-        classes: ['bootstrapEditableTable']
+        classes: ['bootstrapEditableTable'],
+        formatter: participantFormatter
     }
 ];
 
