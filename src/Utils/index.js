@@ -1,4 +1,8 @@
 import React from "react";
+import FormElement from "../components/BasicForm/FormElement";
+import {FormInputType} from "../constants/OtherConstants";
+import {Col, Form} from "react-bootstrap";
+import BasicDateElement from "../components/BasicForm/BasicDateElement";
 
 export const createFormControlSelectOptions = (dataArray, keyName, valueName = keyName) => {
     let formControlSelectOptions = [];
@@ -65,15 +69,10 @@ export const generateFirebaseWritableObject = (object, columnNames) => {
 };
 
 export const extractKeyValueFromArray = (array, key) => {
-    let values = [];
-    array.map(item => {
-        values.push(item[key]);
-    });
-    return values;
+    return array.map(item => item[key]);
 };
 
 export const setUpBootstrapTable = (columnsToShow, isSortable, classNameForCells, cellFormatter) => {
-    console.log('cellf ormatter is ', cellFormatter)
     let tableColumnData = [];
     columnsToShow.forEach(column => {
         tableColumnData.push({
@@ -86,3 +85,72 @@ export const setUpBootstrapTable = (columnsToShow, isSortable, classNameForCells
     });
     return tableColumnData;
 };
+
+export const addExtraProps = (Component, extraProps) => {
+    return <Component.type {...Component.props} {...extraProps} />;
+}
+
+export const createFormElement = (params, inputType) => {
+    switch (inputType) {
+        case FormInputType.DATE: return createDateElement(params);
+        case FormInputType.TEXTAREA: return createTextAreaFormElement(params);
+        default: return createGeneralFormElement(params, inputType);
+    }
+}
+
+export const createEmptyElement = () => {
+    return (<Form.Group as={Col}/>)
+}
+
+export const createTextAreaFormElement = (params) => {
+    let label = params.label || '';
+    let name = params.name || '';
+    let placeholder = params.placeholder || '';
+    let isRequired = params.isRequired || false;
+    let initialValue = params.initialValue || '';
+    let rows = params.rows || 3;
+
+    return React.createElement(FormElement, {
+        label: label,
+        name: name,
+        placeholder: placeholder,
+        isRequired: isRequired,
+        as: FormInputType.TEXTAREA,
+        initialValue: initialValue,
+        rows: rows
+    })
+}
+
+export const createGeneralFormElement = (params, type) => {
+    let label = params.label || '';
+    let name = params.name || '';
+    let placeholder = params.placeholder || '';
+    let isRequired = params.isRequired || false;
+    type = type || FormInputType.TEXT;
+    let initialValue = params.initialValue || '';
+
+    return React.createElement(FormElement, {
+        label: label,
+        name: name,
+        placeholder: placeholder,
+        isRequired: isRequired,
+        type: type,
+        initialValue: initialValue
+    })
+}
+
+export const createDateElement = (params) => {
+    let label = params.label || '';
+    let name = params.name || '';
+    let isRequired = params.isRequired || false;
+    let initialValue = params.initialValue || '';
+    let minVal = params.minVal || '';
+    let maxVal = params.maxVal || '';
+    return React.createElement(BasicDateElement, {
+        label:label,
+        name:name,
+        isRequired:isRequired,
+        initialValue:initialValue,
+        minVal:minVal,
+        maxVal: maxVal})
+}

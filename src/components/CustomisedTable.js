@@ -1,8 +1,8 @@
 import React from 'react';
 import BootstrapTable from "react-bootstrap-table-next";
 import PropTypes from 'prop-types';
-import { Type } from 'react-bootstrap-table2-editor';
-import cellEditFactory from 'react-bootstrap-table2-editor';
+import cellEditFactory, {Type} from 'react-bootstrap-table2-editor';
+import {BasicButton} from "./BasicForm/BasicButton";
 
 const columnHeaderClasses = "tableHeaderHeight fixWidthToContent alignTextCenter"
 
@@ -66,13 +66,28 @@ const formatHeaderText = (text) => {
     if (typeof text === "string") {
         text = <div style={{fontWeight: 'normal', textAlign: 'center'}}>
             <div className={'fixWidthToContent'}>
-                <a href={"javascript:"} style={{display:'inline-block'}} >{text}&nbsp;
-                    <i className="fas fa-sort" style={{color: '#767d87'}}></i>
-                </a>
+                <BasicButton href={"javascript:"}
+                             className="btn btn-outline-light"
+                             style={{...style.transparentButton}}
+                             buttonLabel={<span>{text}&nbsp;<i className="fas fa-sort" style={{color: '#767d87'}}></i></span>}
+                />
             </div>
         </div>
     }
     return text;
+};
+
+const style = {
+    transparentButton: {
+        backgroundColor: "",
+        color: '#007bff',
+        fontSize: '20px',
+        padding: '12px 24px',
+        border: 'none',
+        cursor: 'pointer',
+        // borderRadius: '5px',
+        textAlign: 'center'
+    }
 };
 
 const applyHeaderFormat = (item, nonformattedColumnNames) => {

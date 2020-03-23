@@ -15,6 +15,7 @@ code {
 .bootstrapEditableTable {
     max-width: 2px;
     min-width: max-content;
+    min-height:0;
     /*height: 2px;*/
     overflow-y: auto;
     overflow-x: auto;

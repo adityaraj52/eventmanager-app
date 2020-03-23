@@ -1,26 +1,43 @@
 import React, {Component} from "react";
-import {getISOFormattedTodayDate} from "../Utils";
-import {DATABASE_TABLES, style} from "../constants/OtherConstants";
-import {Button, Col, Container, Form, Modal, Row, Tab, Table, Tabs} from "react-bootstrap";
+import {createDateElement, createFormElement, getISOFormattedTodayDate} from "../Utils";
+import {DATABASE_TABLES, FormInputType, style} from "../constants/OtherConstants";
+import {Button, Container, Modal, Tab, Tabs} from "react-bootstrap";
 import {SHOW_EVENT_DETAILS} from "../constants/routes";
 import CustomisedTable from "../components/CustomisedTable";
 import {withFirebase} from '../components/Firebase';
 import BasicTable from "../components/BasicTable";
+import BasicForm from "../components/BasicForm";
+import {connect} from "react-redux";
+import FormElement from "../components/BasicForm/FormElement";
 
-const cellFormatter = (cell, row) => {
+var md5 = require('md5');
+
+const cellFormatter = () => {
     return (
-            <Button className={'btn btn-primary'} onClick={ExistingPoll.showModal}>Attend</Button>
+        <Button className={'btn btn-primary'} onClick={ExistingPoll.showModal}>Attend</Button>
     );
 };
 
+const getRowKey = (eventInfo) => {
+    return eventInfo.eventOrganiser + '-' + eventInfo.eventStartTime + '-' + eventInfo.eventEndTime + '-' + eventInfo.eventDate + '/';
+};
+
 const participantFormatter = (cell) => {
-    let cellArray = [];
-    cell.split(',').forEach(item => {
-        cellArray.push(
-            <td>{item}</td>
-        )
-    });
-    return (<BasicTable bodyContents={(<tbody><tr>{cellArray}</tr></tbody>)}/>);
+    if (cell) {
+
+        let cellArray = [];
+        Object.entries(cell).forEach((i) => {
+            cellArray.push(<td>{i[1].name}</td>);
+        });
+        return (<BasicTable bodyContents={(<tbody>
+        <tr>{cellArray}</tr>
+        </tbody>)}/>);
+    }
+
+};
+
+const onClickCells = (e, column, columnIndex, row) => {
+    ExistingPoll.copyEventInfo(row);
 };
 
 const columnsToShow = [
@@ -32,7 +49,7 @@ const columnsToShow = [
     {
         dataField: "eventStartTime",
         text: 'StartTime',
-        classes: ['bootstrapEditableTable alignTextCenter fixWidthToContent'],
+        classes: ['bootstrapEditableTable alignTextCenter fixWidthToContent maxInlineSizefitContent'],
     },
     {
         dataField: "eventEndTime",
@@ -55,7 +72,8 @@ const columnsToShow = [
         dataField: "addParticipant",
         text: 'Join',
         classes: ['bootstrapEditableTable alignTextCenter fixWidthToContent maxInlineSizefitContent'],
-        formatter: cellFormatter
+        formatter: cellFormatter,
+        events: {onClick: onClickCells}
     },
     {
         dataField: "eventParticipants",
@@ -64,8 +82,6 @@ const columnsToShow = [
         formatter: participantFormatter
     }
 ];
-
-
 
 const INITIAL_STATE = {
     eventOrganiser: "",
@@ -76,7 +92,8 @@ const INITIAL_STATE = {
     eventLocation: "WaldSchulAllee 71, Berlin",
     existingEvents: null,
     error: null,
-    show: false
+    show: false,
+    clickedEventRow: null
 };
 
 class ExistingPoll extends Component {
@@ -86,21 +103,23 @@ class ExistingPoll extends Component {
         this.existingEvents = null;
         ExistingPoll.showModal = ExistingPoll.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
-        this.appendParticipant = this.appendParticipant.bind(this);
+        ExistingPoll.copyEventInfo = ExistingPoll.copyEventInfo.bind(this);
     }
 
-    static showModal() {
+    static showModal(rowDetails) {
         this.setState({
             show: true
         })
     };
 
-    appendParticipant () {
-        console.log('participant appended')
+    static copyEventInfo(rowDetails) {
+        this.setState({
+            clickedEventRow: getRowKey(rowDetails)
+        })
     }
 
-    hideModal = () => {
-        this.setState({ show: false });
+    hideModal() {
+        this.setState({show: false});
     };
 
     componentDidMount() {
@@ -133,7 +152,8 @@ class ExistingPoll extends Component {
                         keyField={'eventOrganiser + eventStartTime + eventEndTime + eventDate'}
                         data={this.state.existingEvents}
                     />
-                    <MyVerticallyCenteredModal show={this.state.show} onHide={this.hideModal} hideModal={this.hideModal} appendParticipant={this.appendParticipant}/>
+                    <MyVerticallyCenteredModal show={this.state.show} onHide={this.hideModal} hideModal={this.hideModal}
+                                               firebase={this.props.firebase} selectedRow={this.state.clickedEventRow}/>
                 </div>
                 }
             </div>
@@ -141,12 +161,10 @@ class ExistingPoll extends Component {
     }
 }
 
-const cellEditCallBack = (oldValue, newValue, row, column) => {
-    console.log('values are ', oldValue, newValue, row, column)
-};
-
 const INITIAL_STATE_NEW_POLL = {
     eventOrganiser: "",
+    email: '',
+    phone: '',
     eventStartTime: "11:00",
     eventEndTime: "13:30",
     eventDate: getISOFormattedTodayDate(),
@@ -166,23 +184,29 @@ class NewPoll extends Component {
         NewPoll.changeState = NewPoll.changeState.bind(this);
     }
 
-    handleSubmit(e) {
-        e.preventDefault();
-        let dataToWrite = this.state;
-        dataToWrite["eventParticipants"] = this.state.eventOrganiser;
+    handleSubmit(data) {
+        let dataToWrite = {};
+        dataToWrite = {...data};
+        delete dataToWrite.success;
+        delete dataToWrite.error;
+        dataToWrite["eventParticipants"] = {};
+        dataToWrite["eventParticipants"][md5(this.state.email)] = {
+            name: data.eventOrganiser,
+            email: data.email,
+            phone: data.phone,
+        };
 
-        delete dataToWrite.existingEvents;
-        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/' + (this.state.eventOrganiser + '-' + this.state.eventStartTime + '-' + this.state.eventEndTime + '-' + this.state.eventDate))
+        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/' + getRowKey(dataToWrite))
             .set(dataToWrite)
             .then(() => {
                 this.setState({
+                    ...INITIAL_STATE_NEW_POLL,
                     error: 'Poll created Successfully '
                 })
             })
             .catch(error => {
                 this.setState({error});
             });
-        this.setState({eventOrganiser: ""});
     }
 
     static changeState(eventId) {
@@ -202,122 +226,99 @@ class NewPoll extends Component {
             <div>
                 <h2 style={{textAlign: 'center'}}>Create a New Poll</h2>
                 <hr style={style.hrStyle}/>
-                <Form onSubmit={this.handleSubmit}>
+                <BasicForm
+                    formElementArray={
+                        {
+                            0: [createFormElement({label: 'Poll Creator', name: 'eventOrganiser',placeholder: 'First Name, Last Name', isRequired: true}, FormInputType.TEXT),
+                                createFormElement({label: 'Your Email', name: 'email',placeholder: 'email', isRequired: true}, FormInputType.EMAIL)],
+                            1: [createFormElement({label: 'Event Date', name: 'eventDate',initialValue: getISOFormattedTodayDate(), isRequired: true}, FormInputType.DATE)],
+                            2: [
+                                createFormElement({label:'Start Time', name:'eventStartTime', placeholder: '12:00', isRequired: true,initialValue:  '11:30'}, FormInputType.TIME),
+                                createFormElement({label:'End Time', name:'eventEndTime', placeholder: '14:00', isRequired: true, initialValue: '17:00'}, FormInputType.TIME),
+                                createFormElement({label:'Phone', name:'phone', placeholder: 'Telephone', isRequired: true}, FormInputType.NUMBER),
+                            ],
+                            3: [createFormElement({label:'Event Location', name:'eventLocation', placeholder:'Bakers Street, London', isRequired:true}, FormInputType.TEXT)],
+                        }
+                    }
+                    submitHandler={this.handleSubmit}/>
+                {this.state.error && <h3 style={{color: 'green'}}>{this.state.error}</h3>}
 
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Poll Creator</Form.Label>
-                            <Form.Control name="eventOrganiser"
-                                          value={this.state.eventOrganiser}
-                                          onChange={this.handleChange}
-                                          placeholder={"First Name, Last Name"}>
-                            </Form.Control>
-                        </Form.Group>
-
-                    </Form.Row>
-
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <label htmlFor="party">Event Date &nbsp;
-                                <input type="date" name="eventDate" min={"2020-02-01"} max="2022-04-30" style={{
-                                    width: '100%', padding: '6px 12px', border: '1px solid #ced4da',
-                                    borderRadius: '.25rem', marginRight: '0'
-                                }} onChange={this.handleChange} value={this.state.eventDate} required={true}/>
-                            </label>
-                        </Form.Group>
-                    </Form.Row>
-
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Start Time</Form.Label>
-                            <Form.Control name="eventStartTime"
-                                          value={this.state.eventStartTime} type="time" placeholder={"12:00-14:00"}
-                                          onChange={this.handleChange} required={true}>
-                            </Form.Control>
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                            <Form.Label>End Time</Form.Label>
-                            <Form.Control name="eventEndTime"
-                                          value={this.state.eventEndTime} type="time" placeholder={"12:00-14:00"}
-                                          onChange={this.handleChange} required={true}>
-                            </Form.Control>
-                        </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Location</Form.Label>
-                            <Form.Control name="eventLocation"
-                                          value={this.state.eventLocation} placeholder={"123 Street, London"}
-                                          onChange={this.handleChange}>
-                            </Form.Control>
-                        </Form.Group>
-                    </Form.Row>
-
-                    <Form.Row style={{textAlign: 'center'}}>
-                        <Form.Group as={Col}>
-                            <Button variant="primary" type="submit">
-                                Submit
-                            </Button>
-                        </Form.Group>
-                    </Form.Row>
-                    {this.state.error && <h3 style={{color: 'green'}}>{this.state.error}</h3>}
-                </Form>
             </div>
         )
     }
 }
 
-function MyVerticallyCenteredModal(props) {
-    return (
-        <Modal
-            {...props}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Enter Your details
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
+const INITIAL_MODAL_STATE = {
+    name: '',
+    email: '',
+    phone: '',
+    error: null
+}
 
-                    <Form onSubmit={props.appendParticipant}>
-                        <Form.Row>
-                            <Form.Group as={Col}>
-                                <Form.Label>Enter Name</Form.Label>
-                                <Form.Control name="eventOrganiser" placeholder={"First Name, Last Name"}>
-                                </Form.Control>
-                            </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                            <Form.Group as={Col}>
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control name="eventOrganiserEmail" placeholder={"eMail"} type={"email"}>
-                                </Form.Control>
-                            </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                            <Form.Group as={Col}>
-                                <Form.Label>Phone</Form.Label>
-                                <Form.Control name="eventOrganiserEmail" placeholder={"Phone"} type={"number"}>
-                                </Form.Control>
-                            </Form.Group>
-                        </Form.Row>
-                        <Form.Row style={{textAlign: 'center'}}>
-                            <Form.Group as={Col}>
-                                <Button variant="primary" type="submit">
-                                    Submit
-                                </Button>
-                            </Form.Group>
-                        </Form.Row>
-                    </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={props.hideModal}>Close</Button>
-            </Modal.Footer>
-        </Modal>
-    );
+class MyVerticallyCenteredModal extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {...INITIAL_MODAL_STATE};
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(e) {
+        this.setState({[e.target.name]: e.target.value});
+    }
+
+    handleSubmit(data) {
+        const dataToWrite = {...data};
+        delete dataToWrite.error;
+        delete dataToWrite.success;
+        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/' + this.props.selectedRow + '/eventParticipants')
+            .push(dataToWrite)
+            .then(() => {
+                this.setState({
+                    error: 'Thank you for attending the event '
+                })
+            })
+            .catch(error => {
+                this.setState({error});
+            });
+        this.props.onHide();
+    }
+
+    render() {
+        return (
+            <Modal
+                {...this.props}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Enter Your details
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <BasicForm
+                        formElementArray={
+                            {
+                                0: [createFormElement('Enter Name', 'name', 'First Name, Last Name', true, )],
+                                1: [<FormElement label={'Email'} name={'email'} placeholder={'eMail'} isRequired={true}
+                                                 type={FormInputType.EMAIL}/>],
+                                2: [<FormElement label={'First Name Last Name'} name={'phone'} placeholder={'phone'}
+                                                 type={FormInputType.NUMBER}/>]
+                            }
+                        }
+                        submitHandler={this.handleSubmit}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={this.props.hideModal}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
+
+
 }
 
 const CreatePoll = (props) => (
@@ -331,6 +332,12 @@ const CreatePoll = (props) => (
             </Tab>
         </Tabs>
     </Container>
-)
+);
 
-export default withFirebase(CreatePoll);
+const mapStateToProps = state => {
+    return {basicFormSubmitState: state.basicFormSubmitState};
+};
+
+export default connect(
+    mapStateToProps
+)(withFirebase(CreatePoll));

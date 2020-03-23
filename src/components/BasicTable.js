@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 const BasicTable = (props) => (
     <table striped bordered hover className="fixed">
@@ -7,5 +8,9 @@ const BasicTable = (props) => (
         </tbody>
     </table>
 );
+
+BasicTable.propTypes = {
+    bodyContents: PropTypes.object.isRequired,
+};
 
 export default BasicTable;

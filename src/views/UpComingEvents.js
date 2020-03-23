@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {extractKeyValueFromArray} from "../Utils";
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
-import BootstrapTable from 'react-bootstrap-table-next';
 import {withFirebase} from '../components/Firebase';
 import {SHOW_EVENT} from "../constants/routes";
 import CustomisedTable from "../components/CustomisedTable";

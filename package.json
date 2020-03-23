@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "firebase": "^7.8.2",
+    "md5": "^2.2.1",
     "react-bootstrap-sidebar": "0.0.1",
     "react-bootstrap-table-next": "^3.3.5",
     "react-bootstrap-table2-editor": "^1.4.0",

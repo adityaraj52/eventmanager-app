@@ -5,6 +5,18 @@ export const DATABASE_TABLES = {
     EVENT_POLL: "EVENT_POLL"
 };
 
+export const FormInputType = {
+    CHECKBOX: 'checkbox',
+    TEXT: 'text',
+    TEXTAREA: 'textarea',
+    EMAIL: 'email',
+    NUMBER: 'number',
+    TIME: 'time',
+    DATE: 'date',
+}
+
+export const EMPTY_ELEMENT = 'EMPTY_ELEMENT';
+
 export const USER_PROFILE_FIELDS = {
     DISPLAY_NAME: "displayName",
     EMAIL: "email",
