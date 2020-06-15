@@ -22,6 +22,18 @@ class BasicForm extends Component {
         this.state = {...this.initialState, ...INITIAL_STATE}
     }
 
+    componentDidMount() {
+        if(this.props.callBackComponentDidMount){
+            if(this.props.additionalParams)
+                this.setState(this.props.additionalParams);
+            this.props.callBackComponentDidMount.on('value', (data) => {
+                if (data.val()){
+                    this.setState(data.val())
+                }
+            })
+        }
+    }
+
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value});
     }
@@ -33,7 +45,7 @@ class BasicForm extends Component {
                 .forEach(key => {
                     let elementRow = formElements[key];
                     elementRow.forEach(row => {
-                        let initialValue= '';
+                        let initialValue = '';
                         if (row.props.initialValue)
                             initialValue = row.props.initialValue;
                         state[row.props.name] = initialValue;
@@ -53,7 +65,7 @@ class BasicForm extends Component {
         this.state = this.getInitialState(this.props.formElementArray);
     }
 
-    getFormBody () {
+    getFormBody() {
         let array = [];
         Object.keys(this.props.formElementArray).forEach(key => {
             array.push(this.getFormRow(this.props.formElementArray[key]));
@@ -62,12 +74,15 @@ class BasicForm extends Component {
         return array;
     };
 
-    getFormRow(formElementRow){
+    getFormRow(formElementRow) {
         let array = [];
         formElementRow.forEach(element => {
             console.log('element name is ', element.props.name)
 
-            let currelement = React.cloneElement(element, {value: this.state[element.props.name], handleChange: this.handleChange});
+            let currelement = React.cloneElement(element, {
+                value: this.state[element.props.name],
+                handleChange: this.handleChange
+            });
             array.push(currelement);
         });
         return (<Form.Row>{array}</Form.Row>);
@@ -99,22 +114,21 @@ const appendSubmitButton = (array) => {
 
 BasicForm.propTypes = {
     formElementArray: PropTypes.arrayOf(FormElement).isRequired,
+    callBackComponentDidMount: PropTypes.func,
+    additionalParams: PropTypes.object,
     submitHandler: PropTypes.func.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         doBasicFormSubmit: (formState, callBack) => dispatch(doBasicFormSubmit(formState, callBack)),
+        //TODO: Rename to set InitialValue
         doSetBasicFormStateElement: (formState) => dispatch(doSetBasicFormStateElement(formState))
     }
 }
 
-const mapStateToProps = state => {
-    return {basicFormState: state.basicFormState};
-};
-
 export default connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(BasicForm);
 

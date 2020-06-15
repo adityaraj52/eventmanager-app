@@ -13,3 +13,4 @@ export const PAGE_NOT_AVAILABLE = '/page-not-available';
 export const USER_PROFILE = '/userprofile';
 export const USER_TRANSACTIONS = '/userTransactions';
 export const CREATE_POLL = '/createPoll';
+export const ADD_MONEY = '/AddMoney';

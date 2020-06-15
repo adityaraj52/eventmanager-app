@@ -6,7 +6,7 @@ import {Col, Form} from "react-bootstrap";
 
 class FormElement extends Component {
     render() {
-        return(
+        return (
             <Form.Group as={Col}>
                 <Form.Label>{this.props.label}</Form.Label>
                 <Form.Control name={this.props.name}
@@ -17,6 +17,7 @@ class FormElement extends Component {
                               type={this.props.type}
                               as={this.props.as}
                               rows={this.props.rows}
+                              disabled={this.props.disabled}
                 >
                 </Form.Control>
             </Form.Group>
@@ -31,7 +32,7 @@ FormElement.propTypes = {
     initialValue: PropTypes.string,
     isRequired: PropTypes.bool,
     type: PropTypes.oneOfType(FormInputType),
-    onChange : PropTypes.func,
+    onChange: PropTypes.func,
     otherProps: PropTypes.object,
 };
 

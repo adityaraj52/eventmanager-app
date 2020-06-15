@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {createDateElement, createFormElement, getISOFormattedTodayDate} from "../Utils";
+import {createFormElement, getISOFormattedTodayDate} from "../Utils";
 import {DATABASE_TABLES, FormInputType, style} from "../constants/OtherConstants";
 import {Button, Container, Modal, Tab, Tabs} from "react-bootstrap";
 import {SHOW_EVENT_DETAILS} from "../constants/routes";
@@ -7,8 +7,7 @@ import CustomisedTable from "../components/CustomisedTable";
 import {withFirebase} from '../components/Firebase';
 import BasicTable from "../components/BasicTable";
 import BasicForm from "../components/BasicForm";
-import {connect} from "react-redux";
-import FormElement from "../components/BasicForm/FormElement";
+import CustomModal from "../components/BasicForm/CustomModal";
 
 var md5 = require('md5');
 
@@ -106,9 +105,15 @@ class ExistingPoll extends Component {
         ExistingPoll.copyEventInfo = ExistingPoll.copyEventInfo.bind(this);
     }
 
-    static showModal(rowDetails) {
+    static showModal() {
         this.setState({
             show: true
+        })
+    };
+
+    hideModal() {
+        this.setState({
+            show: false
         })
     };
 
@@ -118,9 +123,22 @@ class ExistingPoll extends Component {
         })
     }
 
-    hideModal() {
-        this.setState({show: false});
-    };
+    submitHandler = (data) => {
+        const dataToWrite = {...data};
+        delete dataToWrite.error;
+        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/' + this.state.clickedEventRow + '/eventParticipants')
+            .push(dataToWrite)
+            .then(() => {
+                this.setState({
+                    error: 'Thank you for attending the event '
+                })
+            })
+            .catch(error => {
+                this.setState({error});
+            });
+        this.state = {...INITIAL_STATE};
+        this.hideModal();
+    }
 
     componentDidMount() {
         let ref = this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/');
@@ -152,8 +170,37 @@ class ExistingPoll extends Component {
                         keyField={'eventOrganiser + eventStartTime + eventEndTime + eventDate'}
                         data={this.state.existingEvents}
                     />
-                    <MyVerticallyCenteredModal show={this.state.show} onHide={this.hideModal} hideModal={this.hideModal}
-                                               firebase={this.props.firebase} selectedRow={this.state.clickedEventRow}/>
+
+                    <CustomModal
+                        showModal={this.state.show}
+                        modalTitle={"Enter Your details"}
+                        modalBody={<BasicForm
+                            formElementArray={
+                                {
+                                    0: [createFormElement({
+                                        label: 'Enter Name',
+                                        name: 'name',
+                                        placeholder: 'First Name, Last Name',
+                                        isRequired: true
+                                    }, FormInputType.TEXT)],
+                                    1: [createFormElement({
+                                        label: 'Your Email',
+                                        name: 'email',
+                                        placeholder: 'email',
+                                        isRequired: true
+                                    }, FormInputType.EMAIL)],
+                                    2: [createFormElement({
+                                        label: 'Phone',
+                                        name: 'phone',
+                                        placeholder: 'Phone',
+                                        isRequired: true
+                                    }, FormInputType.NUMBER)]
+
+                                }
+                            }
+                            submitHandler={this.submitHandler}
+                        />}
+                        closeButtonHandler={this.hideModal}/>
                 </div>
                 }
             </div>
@@ -162,17 +209,17 @@ class ExistingPoll extends Component {
 }
 
 const INITIAL_STATE_NEW_POLL = {
-    eventOrganiser: "",
-    email: '',
-    phone: '',
-    eventStartTime: "11:00",
-    eventEndTime: "13:30",
-    eventDate: getISOFormattedTodayDate(),
-    eventParticipant: [],
-    eventLocation: "WaldSchulAllee 71, Berlin",
-    existingEvents: null,
-    error: null
-};
+        eventOrganiser: "",
+        email: '',
+        phone: '',
+        eventStartTime: "11:00",
+        eventEndTime: "13:30",
+        eventDate: getISOFormattedTodayDate(),
+        eventParticipant: [],
+        eventLocation: "WaldSchulAllee 71, Berlin",
+        existingEvents: null,
+        error: null
+    };
 
 class NewPoll extends Component {
     constructor(props) {
@@ -182,6 +229,14 @@ class NewPoll extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         NewPoll.changeState = NewPoll.changeState.bind(this);
+    }
+
+    static changeState(eventId) {
+        this.props.history.push({
+            pathname: SHOW_EVENT_DETAILS,
+            state: {eventId: eventId},
+            search: eventId
+        });
     }
 
     handleSubmit(data) {
@@ -207,14 +262,7 @@ class NewPoll extends Component {
             .catch(error => {
                 this.setState({error});
             });
-    }
-
-    static changeState(eventId) {
-        this.props.history.push({
-            pathname: SHOW_EVENT_DETAILS,
-            state: {eventId: eventId},
-            search: eventId
-        });
+        this.props.stateUpdatingCallback("ExisitngPolls");
     }
 
     handleChange(e) {
@@ -227,17 +275,54 @@ class NewPoll extends Component {
                 <h2 style={{textAlign: 'center'}}>Create a New Poll</h2>
                 <hr style={style.hrStyle}/>
                 <BasicForm
-                    formElementArray={
+                    formElementArray = {
                         {
-                            0: [createFormElement({label: 'Poll Creator', name: 'eventOrganiser',placeholder: 'First Name, Last Name', isRequired: true}, FormInputType.TEXT),
-                                createFormElement({label: 'Your Email', name: 'email',placeholder: 'email', isRequired: true}, FormInputType.EMAIL)],
-                            1: [createFormElement({label: 'Event Date', name: 'eventDate',initialValue: getISOFormattedTodayDate(), isRequired: true}, FormInputType.DATE)],
+                            0: [createFormElement({
+                                label: 'Poll Creator',
+                                name: 'eventOrganiser',
+                                placeholder: 'First Name, Last Name',
+                                isRequired: true
+                            }, FormInputType.TEXT),
+                                createFormElement({
+                                    label: 'Your Email',
+                                    name: 'email',
+                                    placeholder: 'email',
+                                    isRequired: true
+                                }, FormInputType.EMAIL)],
+                            1: [createFormElement({
+                                label: 'Event Date',
+                                name: 'eventDate',
+                                initialValue: getISOFormattedTodayDate(),
+                                isRequired: true
+                            }, FormInputType.DATE)],
                             2: [
-                                createFormElement({label:'Start Time', name:'eventStartTime', placeholder: '12:00', isRequired: true,initialValue:  '11:30'}, FormInputType.TIME),
-                                createFormElement({label:'End Time', name:'eventEndTime', placeholder: '14:00', isRequired: true, initialValue: '17:00'}, FormInputType.TIME),
-                                createFormElement({label:'Phone', name:'phone', placeholder: 'Telephone', isRequired: true}, FormInputType.NUMBER),
+                                createFormElement({
+                                    label: 'Start Time',
+                                    name: 'eventStartTime',
+                                    placeholder: '12:00',
+                                    isRequired: true,
+                                    initialValue: '11:30'
+                                }, FormInputType.TIME),
+                                createFormElement({
+                                    label: 'End Time',
+                                    name: 'eventEndTime',
+                                    placeholder: '14:00',
+                                    isRequired: true,
+                                    initialValue: '17:00'
+                                }, FormInputType.TIME),
+                                createFormElement({
+                                    label: 'Phone',
+                                    name: 'phone',
+                                    placeholder: 'Telephone',
+                                    isRequired: true
+                                }, FormInputType.NUMBER),
                             ],
-                            3: [createFormElement({label:'Event Location', name:'eventLocation', placeholder:'Bakers Street, London', isRequired:true}, FormInputType.TEXT)],
+                            3: [createFormElement({
+                                label: 'Event Location',
+                                name: 'eventLocation',
+                                placeholder: 'Bakers Street, London',
+                                isRequired: true
+                            }, FormInputType.TEXT)],
                         }
                     }
                     submitHandler={this.handleSubmit}/>
@@ -248,96 +333,30 @@ class NewPoll extends Component {
     }
 }
 
-const INITIAL_MODAL_STATE = {
-    name: '',
-    email: '',
-    phone: '',
-    error: null
+const CREATE_POLL_INITIAL_STATE = {
+    activeKey: "NewPoll"
 }
 
-class MyVerticallyCenteredModal extends Component {
-
+class CreatePoll extends Component {
     constructor(props) {
         super(props);
-        this.state = {...INITIAL_MODAL_STATE};
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.state={...CREATE_POLL_INITIAL_STATE};
     }
 
-    handleChange(e) {
-        this.setState({[e.target.name]: e.target.value});
-    }
-
-    handleSubmit(data) {
-        const dataToWrite = {...data};
-        delete dataToWrite.error;
-        delete dataToWrite.success;
-        this.props.firebase.database.ref(DATABASE_TABLES.EVENT_POLL + '/' + this.props.selectedRow + '/eventParticipants')
-            .push(dataToWrite)
-            .then(() => {
-                this.setState({
-                    error: 'Thank you for attending the event '
-                })
-            })
-            .catch(error => {
-                this.setState({error});
-            });
-        this.props.onHide();
-    }
-
-    render() {
-        return (
-            <Modal
-                {...this.props}
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter">
-                        Enter Your details
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <BasicForm
-                        formElementArray={
-                            {
-                                0: [createFormElement('Enter Name', 'name', 'First Name, Last Name', true, )],
-                                1: [<FormElement label={'Email'} name={'email'} placeholder={'eMail'} isRequired={true}
-                                                 type={FormInputType.EMAIL}/>],
-                                2: [<FormElement label={'First Name Last Name'} name={'phone'} placeholder={'phone'}
-                                                 type={FormInputType.NUMBER}/>]
-                            }
-                        }
-                        submitHandler={this.handleSubmit}/>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={this.props.hideModal}>Close</Button>
-                </Modal.Footer>
-            </Modal>
+    render(){
+        return(
+            <Container style={{padding: "20px"}}>
+                <Tabs transition={false} activeKey={this.state.activeKey} onSelect={(k) => {this.setState({activeKey: k})}}>
+                    <Tab eventKey="NewPoll" title="Create a New Poll">
+                        <NewPoll firebase={this.props.firebase} stateUpdatingCallback={(val) => {this.setState({activeKey: val})}}/>
+                    </Tab>
+                    <Tab eventKey="ExisitngPolls" title="Exisitng Polls" onSelect={() => {this.setState({activeKey: "ExisitngPolls"})}}>
+                        <ExistingPoll firebase={this.props.firebase} stateUpdatingCallback={(val) => {this.setState({activeKey: val})}}/>
+                    </Tab>
+                </Tabs>
+            </Container>
         )
     }
-
-
 }
 
-const CreatePoll = (props) => (
-    <Container style={{padding: "20px"}}>
-        <Tabs defaultActiveKey="NewPoll" transition={false}>
-            <Tab eventKey="NewPoll" title="Create a New Poll">
-                <NewPoll firebase={props.firebase}/>
-            </Tab>
-            <Tab eventKey="ExisitngPolls" title="Exisitng Polls">
-                <ExistingPoll firebase={props.firebase}/>
-            </Tab>
-        </Tabs>
-    </Container>
-);
-
-const mapStateToProps = state => {
-    return {basicFormSubmitState: state.basicFormSubmitState};
-};
-
-export default connect(
-    mapStateToProps
-)(withFirebase(CreatePoll));
+export default withFirebase(CreatePoll);

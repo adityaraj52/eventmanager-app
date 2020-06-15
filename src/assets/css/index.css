@@ -15,7 +15,7 @@ code {
 .bootstrapEditableTable {
     max-width: 2px;
     min-width: max-content;
-    min-height:0;
+    min-height: 0;
     /*height: 2px;*/
     overflow-y: auto;
     overflow-x: auto;
@@ -34,12 +34,16 @@ code {
     min-width: max-content
 }
 
+.columnSize10Percent {
+    width: 10%
+}
+
 .maxInlineSizefitContent {
     max-inline-size: fit-content;
 }
 
 .fixed {
-    table-layout:fixed;
+    table-layout: fixed;
     background-color: #fafafa;
     vertical-align: middle;
 }
@@ -51,7 +55,7 @@ code {
 .fixed td {
     max-width: 120px;
     min-width: 120px;
-    overflow:scroll;
+    overflow: scroll;
     vertical-align: middle;
     border-color: cadetblue;
 }

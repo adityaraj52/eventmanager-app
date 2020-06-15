@@ -75,13 +75,17 @@ class Firebase {
     doSetInDataBase = (databaseName, value) => app.database().ref(databaseName + '/' + value.eventId).set(value);
 
     doSetUserProfileInfo = (userProfile) => {
-        app.database().ref(DATABASE_TABLES.USER_PROFILE + '/' + userProfile.userId).set({...userProfile});
+        return app.database().ref(DATABASE_TABLES.USER_PROFILE + '/' + this.doGetUserId()).set({...userProfile});
+    }
+
+    doGetDisplayNameWithUID = (uid) => {
+        return app.database().ref(DATABASE_TABLES.USER_PROFILE + '/' + uid).displayName;
     }
 
     doGetUserId = () => this.auth.getUid();
 
     doDatabaseTableCallBack = (tableName, callBack) => {
-        app.database().ref().child(tableName).on('value', callBack);
+        return app.database().ref().child(tableName).on('value', callBack);
     };
 
     doUpdateEventParticipants = (eventId, callBack) => {

@@ -2,13 +2,18 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import Navigation from "../components/Navigation";
 import {withFirebase} from '../components/Firebase';
-import {doUserAuthorisation} from '../actions';
+import {doSaveUserInformation, doUserAuthorisation} from '../actions';
 
 
 class App extends Component {
     componentDidMount() {
-        this.listener = this.props.firebase.authenticationCallBack(this.props.firebase.auth.onAuthStateChanged(userAuthenticationStatus => {
-            this.props.doUserAuthorisation(userAuthenticationStatus)
+        this.props.firebase.authenticationCallBack(this.props.firebase.auth.onAuthStateChanged(userAuthenticationStatus => {
+            this.props.doUserAuthorisation(userAuthenticationStatus);
+            this.props.doSaveUserInformation({
+                eventOrganiser: this.props.firebase.doGetUserDisplayName(),
+                eventOrganiserPhone: this.props.firebase.doGetUserPhoneNumber(),
+                eventOrganiserEmail: this.props.firebase.doGetUserEmail(),
+            });
         }));
     }
 
@@ -23,7 +28,8 @@ class App extends Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        doUserAuthorisation: (userAuthenticationStatus) => dispatch(doUserAuthorisation(userAuthenticationStatus))
+        doUserAuthorisation: (userAuthenticationStatus) => dispatch(doUserAuthorisation(userAuthenticationStatus)),
+        doSaveUserInformation: (payload) => dispatch(doSaveUserInformation(payload))
     }
 }
 

@@ -4,6 +4,7 @@ import {DATABASE_TABLES, style} from "../constants/OtherConstants";
 import {withFirebase} from '../components/Firebase';
 import {SHOW_EVENT} from "../constants/routes";
 import CustomisedTable from "../components/CustomisedTable";
+import {Container} from "react-bootstrap";
 
 const cellFormatter = (cell, row) => {
     return (<div><a href="javascript:">{cell}</a></div>);
@@ -15,52 +16,56 @@ const onClickCells = (e, column, columnIndex, row) => {
 
 const defaultSorted = [{dataField: "eventDate", order: "asc"}];
 
+const eventIdFormatter = (cell, value) => {
+    if (value) {
+        let x = value.eventId
+        return (<a href={"/ShowEventDetails?"+x}>Go To Event</a>)
+    }
+};
+
+
 const columnsToShow = [
     {
         dataField: "eventId",
         text: 'EVENT_ID',
-        classes: ['bootstrapEditableTable'],
-        formatter: cellFormatter,
+        classes: ['columnSize10Percent alignTextCenter'],
+        formatter: eventIdFormatter,
         events: {onClick: onClickCells}
     },
     {
         dataField: "eventStartTime",
         text: 'StartTime',
         sort: true,
-        classes: ['bootstrapEditableTable']
+        classes: ['columnSize10Percent alignTextCenter']
 
     },
     {
         dataField: "eventEndTime",
         text: 'EndTime',
         sort: true,
-        classes: ['bootstrapEditableTable']
+        classes: ['columnSize10Percent alignTextCenter']
 
     },
     {
         dataField: "eventDate",
         text: 'Date',
         sort: true,
-        classes: ['bootstrapEditableTable']
+        classes: ['columnSize10Percent alignTextCenter']
 
     },
     {
         dataField: "eventCost",
         text: 'EventCost',
         sort: true,
-        classes: ['bootstrapEditableTable']
+        classes: ['columnSize10Percent alignTextCenter']
 
     },
     {
         dataField: "eventLocation",
-        text: 'Total Price',
+        text: 'Event Location',
         sort: true,
-        classes: ['bootstrapEditableTable']
+        classes: ['bootstrapEditableTable alignTextCenter columnSize10Percent']
 
-    },
-    {
-        dataField: "eventParticipants",
-        text: 'Participants'
     }
 ]
 
@@ -121,11 +126,9 @@ class UpComingEvents extends Component {
 
     render() {
         return (
-            <div style={{padding: '5px'}}>
+            <Container style={{padding: '20px'}}>
                 {
-                    <div className="col-md-8 offset-md-2">
-
-
+                    <div className="">
                         <h2 style={{textAlign: 'center'}}>Upcoming Events</h2>
                         <hr style={style.hrStyle}/>
                         <div className="">
@@ -138,7 +141,7 @@ class UpComingEvents extends Component {
                         </div>
                     </div>
                 }
-            </div>
+            </Container>
         );
     }
 }

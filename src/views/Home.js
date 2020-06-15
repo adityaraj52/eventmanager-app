@@ -5,8 +5,8 @@ import {CREATE_EVENT, CREATE_POLL} from "../constants/routes";
 import {BasicIconText} from "../components/BasicIconText";
 
 const Home = (props) => (
-    <Container fluid>
-        <div style={{textAlign: 'center', padding: '20px'}}>
+    <Container style={{padding: '20px'}}fluid>
+        <div style={{textAlign: 'center'}}>
             <h1>Organise your Events and Meetings</h1>
             <p>
                 It's time to say goodbye to other pslanners. Event Tracker is everything your paper planner is and more.

@@ -19,9 +19,9 @@ const style = {
     }
 };
 
-export class BasicButton extends FormElement{
+export class BasicButton extends FormElement {
     render() {
-        return(
+        return (
             <Button className={this.props.className} style={this.props.style} href={this.props.onClick}>
                 {this.props.buttonLabel}
             </Button>

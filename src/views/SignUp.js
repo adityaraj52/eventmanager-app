@@ -14,7 +14,6 @@ const INITIAL_STATE = {
     phoneNumber: '',
     email: '',
     passwordOne: '',
-    passwordTwo: '',
     error: null,
 };
 
@@ -54,7 +53,6 @@ class SignUpFormBase extends Component {
             displayName,
             email,
             passwordOne,
-            passwordTwo,
             phoneNumber,
             error,
         } = this.state;
@@ -101,15 +99,6 @@ class SignUpFormBase extends Component {
                                         <Form.Label>Password</Form.Label>
                                         <Form.Control name="passwordOne" type="password" onChange={this.handleChange}
                                                       placeholder={"Password"} value={passwordOne} required={true}/>
-                                    </Form.Group>
-                                </Form.Row>
-
-                                <Form.Row>
-                                    <Form.Group as={Col}>
-                                        <Form.Label>Confirm Password</Form.Label>
-                                        <Form.Control name="passwordTwo" type="password" onChange={this.handleChange}
-                                                      placeholder={"Confirm Password"} value={passwordTwo}
-                                                      required={true}/>
                                     </Form.Group>
                                 </Form.Row>
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
-import {Button, Col, Form, Table} from "react-bootstrap";
+import {Button, Col, Container, Form, Table} from "react-bootstrap";
 import {DATABASE_TABLES} from "../constants/OtherConstants";
 
 const INITIAL_STATE = {
@@ -80,16 +80,12 @@ class ShowEventDetails extends Component {
     render() {
         return (
             <div>
+                <Container style={{padding: '20px'}}fluid>
                 {
                     this.state.eventDetails &&
                     <div style={{textAlign: 'center'}}>
                         <h2 style={{textAlign: 'center'}}>Event Details</h2>
                         <Table striped bordered hover variant="light">
-                            <thead style={{textAlign: 'center'}}>
-                            <td className={'bootstrapEditableTable btn-warning'}
-                                style={{backgroundColor: '#c9c9d6', fontSize: '21px'}}
-                                colSpan={2}>Event {this.state.eventCopy.eventId}</td>
-                            </thead>
                             <tbody>
                             {this.state.eventDetails}
                             </tbody>
@@ -108,6 +104,7 @@ class ShowEventDetails extends Component {
                         <h3 style={{color: 'red'}}>{this.state.errorEventAttend}</h3>}
                     </div>
                 }
+                </Container>
             </div>
         );
     }

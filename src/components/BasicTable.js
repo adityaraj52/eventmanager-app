@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const BasicTable = (props) => (
     <table striped bordered hover className="fixed">
         <tbody>
-            {props.bodyContents}
+        {props.bodyContents}
         </tbody>
     </table>
 );

@@ -1,7 +1,9 @@
 import React, {Component} from "react";
-import {Button, Col, Container, Form, Row} from "react-bootstrap";
-import {DATABASE_TABLES, style} from "../constants/OtherConstants";
+import {Container} from "react-bootstrap";
+import {DATABASE_TABLES, FormInputType, style} from "../constants/OtherConstants";
 import {withFirebase} from '../components/Firebase';
+import BasicForm from "../components/BasicForm";
+import {createFormElement} from "../Utils";
 
 const INITIAL_STATE = {
     displayName: "",
@@ -12,7 +14,6 @@ const INITIAL_STATE = {
     eventsParticipated: [],
     eventsOrganised: [],
     walletBalance: 0,
-    userId: ''
 };
 
 class UserProfile extends Component {
@@ -23,12 +24,17 @@ class UserProfile extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(e) {
-        e.preventDefault();
-        this.setState({
-            userId: this.props.firebase.doGetUserId()
-        });
-        this.props.firebase.doSetUserProfileInfo(this.state);
+    handleSubmit(data) {
+        let dataToWrite = {};
+        dataToWrite = {...data};
+        console.log('success msg is ', dataToWrite.error, dataToWrite.success);
+        delete dataToWrite.success;
+        delete dataToWrite.error;
+        if (this.props.firebase.doSetUserProfileInfo(dataToWrite))
+            this.setState({
+                    error: 'Profile Updated  '
+                }
+            );
     }
 
     handleChange(e) {
@@ -43,83 +49,81 @@ class UserProfile extends Component {
         let ref = this.props.firebase.database.ref(DATABASE_TABLES.USER_PROFILE + '/' + this.props.firebase.doGetUserId());
         if (ref) {
             ref.on('value', (data) => {
-                if (data.val())
+                if (data.val()) {
                     this.setState(data.val())
+                }
             })
         }
+        return this.state;
     }
 
     render() {
         return (
             <div>
                 <Container style={{padding: "20px"}}>
-                    <Row className="justify-content-md-center">
-                        <Col xs lg="6" className="justify-content-md-center">
-                            <h2 style={{textAlign: 'center'}}>Your Account</h2>
-                            <hr style={style.hrStyle}/>
+                    <h2 style={{textAlign: 'center'}}>Your Account</h2>
+                    <hr style={style.hrStyle}/>
 
-                            <Form onSubmit={this.handleSubmit} success={this.state.formSuccess}
-                                  error={this.state.formError}>
-                                <Form.Row>
-                                    <Form.Group as={Col}>
-                                        <Form.Label>Name</Form.Label>
-                                        <Form.Control onChange={this.handleChange}
-                                                      value={this.state.displayName}
-                                                      name={"displayName"} disabled/>
-                                    </Form.Group>
-                                </Form.Row>
-
-                                <Form.Row>
-                                    <Form.Group as={Col}>
-                                        <Form.Label>Email</Form.Label>
-                                        <Form.Control type={'email'}
-                                                      onChange={this.handleChange}
-                                                      value={this.state.email}
-                                                      name={"email"} disabled/>
-                                    </Form.Group>
-                                </Form.Row>
-
-                                <Form.Row>
-                                    <Form.Group as={Col}>
-                                        <Form.Label>SecondaryEmail</Form.Label>
-                                        <Form.Control type={'email'}
-                                                      onChange={this.handleChange}
-                                                      value={this.state.secondaryEmail}
-                                                      name={"secondaryEmail"}/>
-                                    </Form.Group>
-                                </Form.Row>
-
-                                <Form.Row>
-                                    <Form.Group as={Col}>
-                                        <Form.Label>Phone Number</Form.Label>
-                                        <Form.Control type={'number'}
-                                                      onChange={this.handleChange}
-                                                      value={this.state.phoneNumber}
-                                                      name={"phoneNumber"}/>
-                                    </Form.Group>
-                                </Form.Row>
-
-                                <Form.Row>
-                                    <Form.Group as={Col}>
-                                        <Form.Label>WhatsappNumber</Form.Label>
-                                        <Form.Control type={'number'}
-                                                      onChange={this.handleChange}
-                                                      value={this.state.whatsappNumber}
-                                                      name={"whatsappNumber"} required={true}/>
-                                    </Form.Group>
-                                </Form.Row>
-
-                                <Form.Row style={{textAlign: 'center'}}>
-                                    <Form.Group as={Col}>
-                                        <Button variant="primary" type="submit">
-                                            Update Profile
-                                        </Button>
-                                    </Form.Group>
-                                </Form.Row>
-                            </Form>
-                        </Col>
-                    </Row>
+                    <BasicForm
+                        formElementArray={
+                            {
+                                0: [createFormElement({
+                                    label: 'Name',
+                                    name: 'displayName',
+                                    disabled: true
+                                }, FormInputType.TEXT)],
+                                1: [createFormElement({
+                                    label: 'Your Email',
+                                    name: 'email',
+                                    disabled: true
+                                }, FormInputType.EMAIL),
+                                    createFormElement({
+                                        label: 'Secondary Email',
+                                        name: 'secondaryEmail',
+                                    }, FormInputType.EMAIL)],
+                                2: [createFormElement({
+                                    label: 'Phone',
+                                    name: 'phoneNumber',
+                                    placeholder: 'Telephone',
+                                    isRequired: true
+                                }, FormInputType.NUMBER),
+                                    createFormElement({
+                                        label: 'Skype',
+                                        name: 'skype',
+                                        placeholder: 'Skype'
+                                    }, FormInputType.TEXT)],
+                                3: [createFormElement({
+                                    label: 'Address',
+                                    name: 'address'
+                                }, FormInputType.TEXT)
+                                ],
+                                4: [createFormElement({
+                                    label: 'Facebook',
+                                    name: 'facebook',
+                                    placeholder: 'facebook.com/****'
+                                }, FormInputType.TEXT),
+                                    createFormElement({
+                                        label: 'LinkedIn',
+                                        name: 'linkedin',
+                                        placeholder: 'linkedin.com/in/****'
+                                    }, FormInputType.TEXT),
+                                    createFormElement({
+                                        label: 'Twitter',
+                                        name: 'twitter',
+                                        placeholder: '@xyz'
+                                    }, FormInputType.TEXT)
+                                ]
+                            }
+                        }
+                        callBackComponentDidMount={this.props.firebase.database.ref(DATABASE_TABLES.USER_PROFILE + '/' + this.props.firebase.doGetUserId())}
+                        additionalParams={{
+                            displayName: this.props.firebase.doGetUserDisplayName(),
+                            email: this.props.firebase.doGetUserEmail()
+                        }}
+                        submitHandler={this.handleSubmit}/>
+                    {this.state.error && <h3 style={{color: 'green'}}>{this.state.error}</h3>}
                 </Container>
+
             </div>
         )
     }

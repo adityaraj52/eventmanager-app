@@ -92,10 +92,34 @@ export const addExtraProps = (Component, extraProps) => {
 
 export const createFormElement = (params, inputType) => {
     switch (inputType) {
-        case FormInputType.DATE: return createDateElement(params);
-        case FormInputType.TEXTAREA: return createTextAreaFormElement(params);
-        default: return createGeneralFormElement(params, inputType);
+        case FormInputType.DATE:
+            return createDateElement(params);
+        case FormInputType.TEXTAREA:
+            return createTextAreaFormElement(params);
+        default:
+            return createGeneralFormElement(params, inputType);
     }
+}
+
+export const createDisabledFormElement = (params, inputType= FormInputType.TEXT) => {
+    let label = params.label || '';
+    let name = params.name || '';
+    let value = params.value || '';
+    let placeholder = params.placeholder || '';
+
+    return(
+        <Form.Group as={Col}>
+            <Form.Label>{label}</Form.Label>
+            <Form.Control name={name}
+                          value={value}
+                          placeholder={placeholder}
+                          type={inputType}
+                          disabled>
+            </Form.Control>
+        </Form.Group>
+    )
+
+
 }
 
 export const createEmptyElement = () => {
@@ -128,6 +152,7 @@ export const createGeneralFormElement = (params, type) => {
     let isRequired = params.isRequired || false;
     type = type || FormInputType.TEXT;
     let initialValue = params.initialValue || '';
+    let disabled = params.disabled || false;
 
     return React.createElement(FormElement, {
         label: label,
@@ -135,7 +160,8 @@ export const createGeneralFormElement = (params, type) => {
         placeholder: placeholder,
         isRequired: isRequired,
         type: type,
-        initialValue: initialValue
+        initialValue: initialValue,
+        disabled: disabled
     })
 }
 
@@ -147,10 +173,26 @@ export const createDateElement = (params) => {
     let minVal = params.minVal || '';
     let maxVal = params.maxVal || '';
     return React.createElement(BasicDateElement, {
-        label:label,
-        name:name,
-        isRequired:isRequired,
-        initialValue:initialValue,
-        minVal:minVal,
-        maxVal: maxVal})
+        label: label,
+        name: name,
+        isRequired: isRequired,
+        initialValue: initialValue,
+        minVal: minVal,
+        maxVal: maxVal
+    })
+}
+
+export const fetchFromFirebaseAndSetState = (queryRef, additionalData) => {
+    console.log('this is ', this)
+    if(this && queryRef){
+        this.setState(additionalData);
+        queryRef = queryRef();
+        if (queryRef) {
+            queryRef.on('value', (data) => {
+                if (data.val())
+                    console.log('on state ', this.state)
+                    this.setState(data.val())
+            })
+        }
+    }
 }

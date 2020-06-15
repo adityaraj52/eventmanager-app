@@ -14,7 +14,8 @@ import UpComingEvents from "../views/UpComingEvents";
 import ShowEvent from "../views/ShowEvent";
 import UserTransactions from "../views/UserTransactions";
 import CreatePoll from "../views/CreatePoll";
-
+import AddMoney from "../views/AddMoney";
+import ShowEventDetails from "./ShowEventDetails";
 
 class Navigation extends Component {
     render() {
@@ -24,7 +25,6 @@ class Navigation extends Component {
             }</div>
         )
     }
-
 }
 
 const NavigationAuth = () => (
@@ -40,9 +40,11 @@ const NavigationAuth = () => (
                 <Route exact path={ROUTES.PAGE_NOT_AVAILABLE} component={PageNotAvailable}/>
                 <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
+                <Route path={ROUTES.SHOW_EVENT_DETAILS} component={ShowEventDetails}/>
                 <Route exact path={ROUTES.SHOW_EVENT} component={ShowEvent}/>
                 <Route exact path={ROUTES.USER_TRANSACTIONS} component={UserTransactions}/>
                 <Route exact path={ROUTES.CREATE_POLL} component={CreatePoll}/>
+                <Route exact path={ROUTES.ADD_MONEY} component={AddMoney}/>
             </Switch>
         </BrowserRouter>
     </div>
@@ -65,7 +67,10 @@ const NavigationNonAuth = () => (
 );
 
 const mapStateToProps = state => {
-    return {userAuthorised: state.userAuthorised};
+    return {
+        userAuthorised: state.userAuthorised,
+        userProfile: state.userInformation.userProfile
+    };
 };
 
 export default connect(mapStateToProps)(Navigation);

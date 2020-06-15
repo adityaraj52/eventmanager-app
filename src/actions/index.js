@@ -1,4 +1,10 @@
-import {AUTHORISE_USER, BASICFORM_STATE, BASICFORM_SUBMIT, GET_EVENT_DETAILS} from "../constants/actionConstants";
+import {
+    AUTHORISE_USER,
+    BASICFORM_STATE,
+    BASICFORM_SUBMIT,
+    GET_EVENT_DETAILS,
+    USER_INFORMATION
+} from "../constants/actionConstants";
 
 export const doUserAuthorisation = (payload) => {
     return {
@@ -24,6 +30,13 @@ export const getEventDetails = (payload) => {
 export const doSetBasicFormStateElement = (payload) => {
     return {
         type: BASICFORM_STATE,
+        payload
+    }
+};
+
+export const doSaveUserInformation = (payload) => {
+    return {
+        type: USER_INFORMATION,
         payload
     }
 };

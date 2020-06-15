@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
 import * as ROUTES from '../constants/routes';
-import {Button, Col, Container, Form, Row} from "react-bootstrap";
+import {Col, Container, Form, Row} from "react-bootstrap";
 import {style} from "../constants/OtherConstants";
 import {Link} from "react-router-dom";
-import ShowEventDetails from "../components/ShowEventDetails";
+import {BasicButton} from "../components/BasicForm/BasicButton";
 
 const INITIAL_STATE = {
     eventId: '',
@@ -16,33 +16,12 @@ const INITIAL_STATE = {
 class ShowEvent extends Component {
     constructor(props) {
         super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {...INITIAL_STATE};
     }
 
-    handleSubmit = event => {
-        event.preventDefault();
-        this.setState({
-            submitTrue: true
-        })
-    };
-
     handleChange = event => {
         this.setState({[event.target.name]: event.target.value});
-        this.setState({
-            submitTrue: false
-        })
     };
-
-    componentDidMount() {
-        if (this.props.location && this.props.location.state) {
-            this.setState({
-                eventId: this.props.location.search.substr(1),
-                submitTrue: true
-            })
-            this.props.location.search = ""
-        }
-    }
 
     render() {
         const error = this.state;
@@ -65,9 +44,8 @@ class ShowEvent extends Component {
 
                                 <Form.Row style={{textAlign: 'center'}}>
                                     <Form.Group as={Col}>
-                                        <Button variant="primary" type="submit">
-                                            Get Event Details
-                                        </Button>
+                                        <BasicButton buttonLabel={"Get Event Details"} variant="primary" type="submit" onClick={"/ShowEventDetails?"+this.state.eventId}>
+                                        </BasicButton>
 
                                     </Form.Group>
                                 </Form.Row>
@@ -77,12 +55,6 @@ class ShowEvent extends Component {
                                     Don't know the event id ? <Link to={ROUTES.UPCOMING_EVENT}>Click Here</Link> for
                                     Upcoming Events
                                 </p>
-
-                                {
-                                    this.state.eventId && this.state.submitTrue &&
-                                    <ShowEventDetails
-                                        location={{search: '?' + this.state.eventId}}/>
-                                }
                             </Form>
                         </Col>
                     </Row>

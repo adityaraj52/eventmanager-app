@@ -24,6 +24,7 @@ const INITIAL_STATE = {
     eventOrganiser: "",
     eventOrganiserPhone: "",
     eventOrganiserEmail: "",
+    eventOrganiserUID: "",
     eventCost: "",
     eventCostSplitEqually: "Yes",
     eventUrl: "",
@@ -53,6 +54,7 @@ class CreateEvent extends Component {
             eventOrganiser: this.props.firebase.doGetUserDisplayName(),
             eventOrganiserPhone: this.props.firebase.doGetUserPhoneNumber(),
             eventOrganiserEmail: this.props.firebase.doGetUserEmail(),
+            eventOrganiserUID: this.props.firebase.doGetUserId()
         });
     }
 

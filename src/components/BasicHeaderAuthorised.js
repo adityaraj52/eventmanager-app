@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {
+    ADD_MONEY,
     CREATE_EVENT,
     CREATE_POLL,
     PAGE_NOT_AVAILABLE,
@@ -38,7 +39,7 @@ const BasicHeaderAuthorised = (props) => (
                     <NavDropdown title="Wallet" id="collasible-nav-dropdown">
                         <NavDropdown.Item href={USER_TRANSACTIONS}>Transactions</NavDropdown.Item>
                         <NavDropdown.Divider/>
-                        <NavDropdown.Item href={CREATE_EVENT}>Wallet Balance</NavDropdown.Item>
+                        <NavDropdown.Item href={ADD_MONEY}>Add Wallet Money</NavDropdown.Item>
                     </NavDropdown>
 
                 </Nav>

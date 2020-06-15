@@ -14,7 +14,7 @@ const dateStyle = {
 
 class BasicDateElement extends Component {
     render() {
-        return(
+        return (
             <Form.Group as={Col}>
                 <label htmlFor="party">{this.props.label} &nbsp;
                     <input type="date"
@@ -36,7 +36,7 @@ BasicDateElement.propTypes = {
     name: PropTypes.string.isRequired,
     minVal: PropTypes.string,
     maxVal: PropTypes.string,
-    onChange : PropTypes.func,
+    onChange: PropTypes.func,
     // value: PropTypes.string,
     isRequired: PropTypes.bool
 };

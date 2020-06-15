@@ -2,9 +2,9 @@ import React from 'react';
 import FormElement from "./BasicForm/FormElement";
 import PropTypes from 'prop-types';
 
-export class BasicIconText extends FormElement{
+export class BasicIconText extends FormElement {
     render() {
-        return(
+        return (
             <div>
                 <a href={this.props.hrefLink}>
                     <h3>

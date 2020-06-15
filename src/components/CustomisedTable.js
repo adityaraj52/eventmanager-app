@@ -19,13 +19,13 @@ const CustomisedTable = (props) => (
                                         setTimeout(() => {
                                             console.log(oldValue, newValue, row, column, done);
                                             // eslint-disable-next-line no-restricted-globals
-                                            if(confirm("Do you accept changes !")){
+                                            if (confirm("Do you accept changes !")) {
                                                 done(); // contine to save the changes
-                                            } else{
+                                            } else {
                                                 console.log('change rejected')
                                             }
                                         }, 0);
-                                        return { async: true };
+                                        return {async: true};
                                     }
                                 })}
                 />
@@ -69,7 +69,8 @@ const formatHeaderText = (text) => {
                 <BasicButton href={"javascript:"}
                              className="btn btn-outline-light"
                              style={{...style.transparentButton}}
-                             buttonLabel={<span>{text}&nbsp;<i className="fas fa-sort" style={{color: '#767d87'}}></i></span>}
+                             buttonLabel={<span>{text}&nbsp;<i className="fas fa-sort"
+                                                               style={{color: '#767d87'}}></i></span>}
                 />
             </div>
         </div>
@@ -100,12 +101,12 @@ const applyHeaderFormat = (item, nonformattedColumnNames) => {
 
 const applyCellEditMode = (item, editableColumns) => {
     if (!!editableColumns) {
-        let colToEdit = editableColumns.filter(i => i.columnName===item["text"]);
-        if(colToEdit.length > 0){
-            if(!!colToEdit.editType){
+        let colToEdit = editableColumns.filter(i => i.columnName === item["text"]);
+        if (colToEdit.length > 0) {
+            if (!!colToEdit.editType) {
                 colToEdit["editType"] = Type.TEXT
             }
-            item["editor"]={
+            item["editor"] = {
                 type: colToEdit[0].editType
             }
             item["editable"] = (cell, row, rowIndex, colIndex) => {
