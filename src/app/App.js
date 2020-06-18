@@ -8,12 +8,14 @@ import {doSaveUserInformation, doUserAuthorisation} from '../actions';
 class App extends Component {
     componentDidMount() {
         this.props.firebase.authenticationCallBack(this.props.firebase.auth.onAuthStateChanged(userAuthenticationStatus => {
-            this.props.doUserAuthorisation(userAuthenticationStatus);
-            this.props.doSaveUserInformation({
-                eventOrganiser: this.props.firebase.doGetUserDisplayName(),
-                eventOrganiserPhone: this.props.firebase.doGetUserPhoneNumber(),
-                eventOrganiserEmail: this.props.firebase.doGetUserEmail(),
-            });
+            if(userAuthenticationStatus && userAuthenticationStatus.emailVerified){
+                this.props.doUserAuthorisation(userAuthenticationStatus);
+                this.props.doSaveUserInformation({
+                    eventOrganiser: this.props.firebase.doGetUserDisplayName(),
+                    eventOrganiserPhone: this.props.firebase.doGetUserPhoneNumber(),
+                    eventOrganiserEmail: this.props.firebase.doGetUserEmail(),
+                });
+            }
         }));
     }
 

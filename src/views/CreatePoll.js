@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {createFormElement, getISOFormattedTodayDate} from "../Utils";
 import {DATABASE_TABLES, FormInputType, style} from "../constants/OtherConstants";
-import {Button, Container, Modal, Tab, Tabs} from "react-bootstrap";
+import {Button, Container, Tab, Tabs} from "react-bootstrap";
 import {SHOW_EVENT_DETAILS} from "../constants/routes";
 import CustomisedTable from "../components/CustomisedTable";
 import {withFirebase} from '../components/Firebase';

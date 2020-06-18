@@ -14,8 +14,8 @@ import UpComingEvents from "../views/UpComingEvents";
 import ShowEvent from "../views/ShowEvent";
 import UserTransactions from "../views/UserTransactions";
 import CreatePoll from "../views/CreatePoll";
-import AddMoney from "../views/AddMoney";
 import ShowEventDetails from "./ShowEventDetails";
+import ThankYou from "../views/ThankYou";
 
 class Navigation extends Component {
     render() {
@@ -44,7 +44,6 @@ const NavigationAuth = () => (
                 <Route exact path={ROUTES.SHOW_EVENT} component={ShowEvent}/>
                 <Route exact path={ROUTES.USER_TRANSACTIONS} component={UserTransactions}/>
                 <Route exact path={ROUTES.CREATE_POLL} component={CreatePoll}/>
-                <Route exact path={ROUTES.ADD_MONEY} component={AddMoney}/>
             </Switch>
         </BrowserRouter>
     </div>
@@ -60,6 +59,7 @@ const NavigationNonAuth = () => (
                 <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
                 <Route exact path={ROUTES.CREATE_POLL} component={CreatePoll}/>
+                <Route exact path={ROUTES.THANK_YOU} component={ThankYou}/>
                 <Route exact path={"*"} component={SignIn}/>
             </Switch>
         </BrowserRouter>

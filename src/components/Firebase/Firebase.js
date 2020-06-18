@@ -23,16 +23,49 @@ class Firebase {
         this.firestore = app.firestore()
     }
 
-    doCreateUserWithEmailAndPassword = (email, password) =>
-        this.auth.createUserWithEmailAndPassword(email, password);
-
-
     doSignInWithEmailAndPassword = (email, password) =>
         this.auth.signInWithEmailAndPassword(email, password);
 
-    doAddEvent = (eventDetail) => {
-        // this.auth.ref
-    }
+
+    doCreateUserWithEmailAndPassword = (email, password) =>
+        this.auth.createUserWithEmailAndPassword(email, password);
+
+    doSendEmailVerification = () =>
+        this.auth.currentUser.sendEmailVerification({
+            url: process.env.REACT_APP_CONFIRMATION_EMAIL_REDIRECT
+        });
+
+
+    onAuthUserListener = (next, fallback) =>
+        this.auth.onAuthStateChanged(authUser => {
+            if (authUser) {
+                this.user(authUser.uid)
+                    .once('value')
+                    .then(snapshot => {
+                        const dbUser = snapshot.val();
+
+                        // default empty roles
+                        if (!dbUser.roles) {
+                            dbUser.roles = [];
+                        }
+
+                        // merge auth and db user
+                        authUser = {
+                            uid: authUser.uid,
+                            email: authUser.email,
+                            emailVerified: authUser.emailVerified,
+                            providerData: authUser.providerData,
+                            ...dbUser,
+                        };
+
+                        next(authUser);
+                    });
+            } else {
+                fallback();
+            }
+        });
+
+
 
     doCreatedEvent = (columnsToShow) => {
         let arrayTableData, databaseTableData,
@@ -103,6 +136,12 @@ class Firebase {
             this.doSetInDataBase(DATABASE_TABLES.EVENT_INFO, res.push(this.doGetUserId()))
         });
     };
+
+    // *** User API ***
+
+    user = uid => this.database.ref(`users/${uid}`);
+
+    users = () => this.database.ref('users');
 
 
 }

@@ -36,12 +36,7 @@ const BasicHeaderAuthorised = (props) => (
                         <NavDropdown.Divider/>
                         <NavDropdown.Item href={PAGE_NOT_AVAILABLE}>Delete Event</NavDropdown.Item>
                     </NavDropdown>
-                    <NavDropdown title="Wallet" id="collasible-nav-dropdown">
-                        <NavDropdown.Item href={USER_TRANSACTIONS}>Transactions</NavDropdown.Item>
-                        <NavDropdown.Divider/>
-                        <NavDropdown.Item href={ADD_MONEY}>Add Wallet Money</NavDropdown.Item>
-                    </NavDropdown>
-
+                    <Nav.Link href={USER_TRANSACTIONS}>Transactions</Nav.Link>
                 </Nav>
                 <Form inline>
                     {/*<a href={SIGN_OUT} className="btn btn-outline-light" role="button">Sign Out</a>*/}

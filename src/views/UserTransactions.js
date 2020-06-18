@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {withFirebase} from '../components/Firebase';
 import {DATABASE_TABLES, style} from "../constants/OtherConstants";
-import {Button, Container, Tab, Table, Tabs} from "react-bootstrap";
+import {Container, Tab, Table, Tabs} from "react-bootstrap";
 import CustomisedTable from "../components/CustomisedTable";
 import CustomModal from "../components/BasicForm/CustomModal";
+import {BasicButton} from "../components/BasicForm/BasicButton";
 
 const INITIAL_STATE = {
     eventTransactions: [],
@@ -33,10 +34,10 @@ const participantFormatter = (cell, value) => {
             </Table>
 
         return (
-            <Button className={'btn btn-primary'} onClick={() => {
+            <BasicButton onClick={() => {
                 MyEvents.addModalContents(tableBody);
                 MyEvents.showModal();
-            }}>Show</Button>
+            }} buttonLabel={"Show"} useAsHref={false}/>
         );
     }
 
@@ -51,25 +52,35 @@ const eventIdFormatter = (cell, value) => {
 
 const columnsToShow = [
     {
-        dataField: "eventId",
-        text: 'Event Url',
-        classes: ['alignTextCenter columnSize10Percent'],
-        formatter: eventIdFormatter
+        dataField: "eventDate",
+        text: 'Date',
+        classes: ['alignTextCenter columnSize10Percent']
     },
     {
         dataField: "eventParticipantsList",
         text: 'Participants',
         formatter: participantFormatter,
-        classes: ['alignTextCenter columnSize10Percent']
+        classes: ['alignTextCenter']
     },
     {
-        dataField: "eventDate",
-        text: 'Date',
-        classes: ['alignTextCenter']
+        dataField: "eventId",
+        text: 'Event Url',
+        classes: ['alignTextCenter'],
+        formatter: eventIdFormatter
     },
     {
         dataField: "eventCost",
         text: 'Event Cost',
+        classes: ['alignTextCenter']
+    },
+    {
+        dataField: "yourShare",
+        text: 'Your Share',
+        classes: ['alignTextCenter']
+    },
+    {
+        dataField: "otherShare",
+        text: 'Others Share',
         classes: ['alignTextCenter']
     }
 ];
@@ -123,6 +134,8 @@ class MyEvents extends Component {
                                 eventOrganiserId: value.eventOrganiserUID,
                                 eventId: value.eventId,
                                 eventCost: value.eventCost,
+                                yourShare: (value.eventCost/value.eventParticipant.length).toFixed(1),
+                                otherShare: value.eventCost - ((value.eventCost/value.eventParticipant.length).toFixed(1)),
                                 eventDate: value.eventDate,
                                 eventParticipantsList: value.eventParticipant
                             });
@@ -152,6 +165,8 @@ class MyEvents extends Component {
                             arrayTableData.push({
                                 eventOrganiserId: value.eventOrganiserUID,
                                 eventId: value.eventId,
+                                yourShare: (value.eventCost/value.eventParticipant.length).toFixed(1),
+                                otherShare: value.eventCost - ((value.eventCost/value.eventParticipant.length).toFixed(1)),
                                 eventCost: value.eventCost,
                                 eventDate: value.eventDate,
                                 eventParticipantsList: value.eventParticipant

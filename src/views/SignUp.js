@@ -15,6 +15,7 @@ const INITIAL_STATE = {
     email: '',
     passwordOne: '',
     error: null,
+    isAdmin: false
 };
 
 class SignUpFormBase extends Component {
@@ -24,25 +25,60 @@ class SignUpFormBase extends Component {
     }
 
     onSubmit = event => {
-        const {email, passwordOne, displayName, phoneNumber} = this.state;
+        const { displayName, email, passwordOne, isAdmin } = this.state;
+        const roles = [];
+
+        if (isAdmin) {
+            roles.push("ADMIN");
+        }
 
         this.props.firebase
             .doCreateUserWithEmailAndPassword(email, passwordOne)
-            .then(function (result) {
-                result.user.updateProfile({
-                    displayName: displayName,
-                    phoneNumber: phoneNumber
-                })
-            })
             .then(authUser => {
-                this.setState({...INITIAL_STATE});
-                this.props.history.push(ROUTES.HOME);
+                // Create a user in your Firebase realtime database
+                return this.props.firebase.user(authUser.user.uid).set({
+                    displayName,
+                    email,
+                    roles,
+                });
+            })
+            .then(() => {
+                return this.props.firebase.doSendEmailVerification();
+            })
+            .then(() => {
+                this.setState({ ...INITIAL_STATE });
+                this.props.history.push(ROUTES.THANK_YOU);
             })
             .catch(error => {
-                this.setState({error});
+                if (error.code === "ERROR_CODE_ACCOUNT_EXISTS") {
+                    error.message = "ERROR_MSG_ACCOUNT_EXISTS";
+                }
+                this.setState({ error });
             });
+
         event.preventDefault();
-    }
+    };
+
+    // onSubmit = event => {
+    //     const {email, passwordOne, displayName, phoneNumber} = this.state;
+    //
+    //     this.props.firebase
+    //         .doCreateUserWithEmailAndPassword(email, passwordOne)
+    //         .then(function (result) {
+    //             result.user.updateProfile({
+    //                 displayName: displayName,
+    //                 phoneNumber: phoneNumber
+    //             })
+    //         })
+    //         .then(authUser => {
+    //             this.setState({...INITIAL_STATE});
+    //             this.props.history.push(ROUTES.HOME);
+    //         })
+    //         .catch(error => {
+    //             this.setState({error});
+    //         });
+    //     event.preventDefault();
+    // }
 
     handleChange = event => {
         this.setState({[event.target.name]: event.target.value});
